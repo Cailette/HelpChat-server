@@ -8,14 +8,14 @@ module.exports = {
                 firstname: req.body.firstname, 
                 lastname: req.body.lastname, 
                 email: req.body.email,
-                password: req.body.password }, function (err, result) {
+                password: req.body.password }, function (err, userInfo) {
             if (err) {
                 next(err);
             } else {
                 res.json({
-                    status: "200", 
+                    status: 200, 
                     message: "User added successfully!", 
-                    data: null
+                    data: userInfo
                 });
             }
         });
@@ -29,17 +29,18 @@ module.exports = {
                 if(bcrypt.compareSync(req.body.password, userInfo.password)) {
                     const token = jwt.sign({ id: userInfo._id }, req.app.get('secretKey'), { expiresIn: '24h' });
                     res.json({
-                        status:"200", 
+                        status: 200, 
                         message: "User found successfully!", 
                         data:{ 
                             user: userInfo, 
-                            token:token }
+                            token: token 
+                        }
                     });
                 }else{
                     res.json({
-                        status:"error", 
+                        status: 401, 
                         message: "Invalid email or password!", 
-                        data:null
+                        data: null
                     });
                 }
             }

@@ -18,12 +18,25 @@ const UserSchema = new Schema({
     email: {
         type: String,
         trim: true,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
         trim: true,
         required: true
+    },
+    isActive: {
+        type: Boolean,
+        trim: true,
+        default: false
+    },
+    representative: {
+        type: String,
+        trim: true,
+        default: null,
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User'
     }
 });
 
