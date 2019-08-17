@@ -9,5 +9,8 @@ router.post('/authenticate', userController.authenticate);
 router.get('/account-information', authentication.authenticateUser, userController.getById);
 router.put('/edit-account-information', authentication.authenticateUser, userController.updateById);
 router.put('/switch-activity', authentication.authenticateUser, userController.switchActivity);
+router.put('/account-information', authentication.authenticateUser, userController.updateById);
+router.delete('/account', authentication.authenticateUser, userController.delete);
+router.get('/agents-accounts', authentication.authenticateUser, userController.getAll);
 
 module.exports = router;

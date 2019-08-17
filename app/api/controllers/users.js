@@ -3,31 +3,28 @@ var bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-    create: function(req, res, next) {
-        userModel.create({ 
-                firstname: req.body.firstname, 
-                lastname: req.body.lastname, 
-                email: req.body.email,
-                password: req.body.password }, function (err, userInfo) {
-            if (err) {
-                next(err);
-            } else {
+    create: async function(req, res, next) {
+        return await userModel.create({ 
+            firstname: req.body.firstname, 
+            lastname: req.body.lastname, 
+            email: req.body.email,
+            password: req.body.password,
+            representative: req.params.userId ? req.params.userId : null })
+            .then(userInfo => {
                 res.json({
                     status: 200, 
                     message: "User added successfully!", 
                     data: userInfo
                 });
-            }
-        });
+            })
+            .catch(err => next(err));
     },
 
-    authenticate: function(req, res, next) {
-        userModel.findOne({ email:req.body.email }, function(err, userInfo){
-            if (err) {
-                next(err);
-            } else {
-                if(bcrypt.compareSync(req.body.password, userInfo.password)) {
-                    const token = jwt.sign({ id: userInfo._id }, req.app.get('secretKey'), { expiresIn: '24h' });
+    authenticate: async function(req, res, next) {
+        return await userModel.findOne({ email: req.body.email })
+            .then(user => {
+                if(bcrypt.compareSync(req.body.password, user.password)) {
+                    const token = jwt.sign({ id: user._id }, req.app.get('secretKey'), { expiresIn: '24h' });
                     res.json({
                         status: 200, 
                         message: "User found successfully!", 
@@ -42,15 +39,13 @@ module.exports = {
                         data: null
                     });
                 }
-            }
-        });
+            })
+            .catch(err => next(err));
     },
 
-    getById: function(req, res, next) {
-        userModel.findById(req.params.userId ? req.params.userId : req.body.userId, function(err, userInfo){
-            if (err) {
-                next(err);
-            } else {
+    getById: async function(req, res, next) {
+        return await userModel.findById(req.params.userId ? req.params.userId : req.body.userId).select('-password')
+            .then(userInfo => { 
                 res.json({
                     status: 200, 
                     message: "User found successfully!", 
@@ -58,57 +53,73 @@ module.exports = {
                         user: userInfo
                     }
                 }); 
-            }
-        }).select('-password');
+            })
+            .catch(err => next(err));
     },
 
-    updateById: function(req, res, next) {
-        userModel.findById(req.body.userId, function(err, user){
-            if (err) {
-                next(err);
-            } else {
+    updateById: async function(req, res, next) {
+        return await userModel.findById(req.params.userId ? req.params.userId : req.body.userId)
+            .then(user => {
                 user.firstname = req.body.firstname || user.firstname;
                 user.lastname = req.body.lastname || user.lastname;
                 user.email = req.body.email || user.email;
                 user.password = req.body.password || user.password;
-
-                user.save(function (err, userUpdated) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        res.json({
-                            status: 200, 
-                            message: "User updated successfully!", 
-                            data:{ 
-                                user: userUpdated
-                            }
-                        }); 
+                user.save();
+            })
+            .then(userUpdated => {
+                res.json({
+                    status: 200, 
+                    message: "User updated successfully!", 
+                    data:{ 
+                        user: userUpdated
                     }
-                });
-            }
-        });
+                }); 
+            })
+            .catch(err => next(err));
     },
 
-    switchActivity: function(req, res, next){
-        userModel.findById(req.body.userId, function(err, user){
-            if (err) {
-                next(err);
-            } else {
-                user.isActive = !user.isActive;
-                user.save(function (err, userUpdated) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        res.json({
-                            status: 200, 
-                            message: "User updated successfully!", 
-                            data:{ 
-                                user: userUpdated
-                            }
-                        }); 
-                    }
+    switchActivity: async function(req, res, next){
+        return await userModel.findById(req.body.userId)
+            .then(user => { 
+                user.isActive = !user.isActive; user.save() 
+            })
+            .then(userUpdated => { 
+                res.json({
+                status: 200, 
+                message: "User updated successfully!", 
+                data:{ 
+                    user: userUpdated
+                }})
+            })
+            .catch(err => next(err));
+    },
+
+    delete: async function(req, res, next){
+        if(!req.params.userId){
+            const rest = await userModel.deleteMany({ representative: req.body.userId });
+        }
+        return await userModel.findOneAndDelete(req.params.userId ? req.params.userId : req.body.userId)
+            .then(userDeleted => { 
+                res.json({
+                    status: 200, 
+                    message: "User deleted successfully!", 
+                    data: null
                 });
-            }
-        });
+            })
+            .catch(err => next(err));
+    },
+
+    getAll: async function(req, res, next) {
+        return await userModel.find({ representative: req.body.userId }).select('-password')
+            .then(users => { 
+                res.json({
+                    status: 200, 
+                    message: "Users found successfully!", 
+                    data:{ 
+                        user: users
+                    }
+                }); 
+            })
+            .catch(err => next(err));
     },
 }
