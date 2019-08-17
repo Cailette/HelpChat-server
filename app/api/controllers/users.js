@@ -9,7 +9,7 @@ module.exports = {
             lastname: req.body.lastname, 
             email: req.body.email,
             password: req.body.password,
-            representative: req.params.userId ? req.params.userId : null })
+            representative: req.params.addAgent ? req.body.userId : null })
             .then(userInfo => {
                 res.json({
                     status: 200, 
@@ -44,7 +44,7 @@ module.exports = {
     },
 
     getById: async function(req, res, next) {
-        return await userModel.findById(req.params.userId ? req.params.userId : req.body.userId).select('-password')
+        return await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId).select('-password')
             .then(userInfo => { 
                 res.json({
                     status: 200, 
@@ -58,13 +58,23 @@ module.exports = {
     },
 
     updateById: async function(req, res, next) {
-        return await userModel.findById(req.params.userId ? req.params.userId : req.body.userId)
+        console.log("req.params.AgentId" + req.params.AgentId)
+        return await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId)
             .then(user => {
                 user.firstname = req.body.firstname || user.firstname;
                 user.lastname = req.body.lastname || user.lastname;
                 user.email = req.body.email || user.email;
                 user.password = req.body.password || user.password;
                 user.save();
+            })
+            .catch(err => {
+                return res.json({
+                    status: 401, 
+                    message: "Invalid data!", 
+                    data:{ 
+                        err: err
+                    }
+                }); 
             })
             .then(userUpdated => {
                 res.json({
@@ -75,7 +85,15 @@ module.exports = {
                     }
                 }); 
             })
-            .catch(err => next(err));
+            .catch(err => {
+                return res.json({
+                    status: 401, 
+                    message: "Invalid data!", 
+                    data:{ 
+                        err: err
+                    }
+                }); 
+            });
     },
 
     switchActivity: async function(req, res, next){
@@ -94,11 +112,12 @@ module.exports = {
             .catch(err => next(err));
     },
 
+    // NIE TESTOWANE
     delete: async function(req, res, next){
-        if(!req.params.userId){
+        if(!req.params.AgentId){
             const rest = await userModel.deleteMany({ representative: req.body.userId });
         }
-        return await userModel.findOneAndDelete(req.params.userId ? req.params.userId : req.body.userId)
+        return await userModel.deleteOne({ _id: req.params.AgentId ? req.params.AgentId : req.body.userId })
             .then(userDeleted => { 
                 res.json({
                     status: 200, 

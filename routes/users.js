@@ -12,5 +12,9 @@ router.put('/switch-activity', authentication.authenticateUser, userController.s
 router.put('/account-information', authentication.authenticateUser, userController.updateById);
 router.delete('/account', authentication.authenticateUser, userController.delete);
 router.get('/agents-accounts', authentication.authenticateUser, userController.getAll);
+router.post('/create-agent-account/:addAgent', authentication.authenticateUser, userController.create);
+router.get('/agent-account-information/:AgentId', authentication.authenticateUser, userController.getById);
+router.put('/edit-agent-account/:AgentId', authentication.authenticateUser, userController.updateById);
+router.delete('/agent-account/:AgentId', authentication.authenticateUser, userController.delete);
 
 module.exports = router;
