@@ -11,10 +11,14 @@ module.exports = {
             password: req.body.password,
             representative: req.params.addAgent ? req.body.userId : null })
             .then(userInfo => {
-                res.json({
-                    status: 200, 
+                res.status(201).json({
                     message: "User added successfully!", 
                     data: userInfo
+                });
+            }, err => {
+                res.status(401).json({
+                    message: "User can not be added!", 
+                    data: err
                 });
             })
             .catch(err => next(err));
@@ -25,20 +29,23 @@ module.exports = {
             .then(user => {
                 if(bcrypt.compareSync(req.body.password, user.password)) {
                     const token = jwt.sign({ id: user._id }, req.app.get('secretKey'), { expiresIn: '24h' });
-                    res.json({
-                        status: 200, 
+                    res.status(200).json({
                         message: "User found successfully!", 
                         data:{  
                             token: token 
                         }
                     });
                 }else{
-                    res.json({
-                        status: 401, 
-                        message: "Invalid email or password!", 
+                    res.status(401).json({
+                        message: "Invalid password!", 
                         data: null
                     });
                 }
+            }, err => {
+                res.status(401).json({
+                    message: "Invalid email!", 
+                    data: err
+                });
             })
             .catch(err => next(err));
     },
@@ -46,19 +53,22 @@ module.exports = {
     getById: async function(req, res, next) {
         return await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId).select('-password')
             .then(userInfo => { 
-                res.json({
-                    status: 200, 
+                res.status(200).json({
                     message: "User found successfully!", 
                     data:{ 
                         user: userInfo
                     }
                 }); 
+            }, err => {
+                res.status(401).json({
+                    message: "User can not be found!", 
+                    data: err
+                });
             })
             .catch(err => next(err));
     },
 
     updateById: async function(req, res, next) {
-        console.log("req.params.AgentId" + req.params.AgentId)
         return await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId)
             .then(user => {
                 user.firstname = req.body.firstname || user.firstname;
@@ -66,28 +76,27 @@ module.exports = {
                 user.email = req.body.email || user.email;
                 user.password = req.body.password || user.password;
                 user.save();
-            })
-            .catch(err => {
-                return res.json({
-                    status: 401, 
-                    message: "Invalid data!", 
-                    data:{ 
-                        err: err
-                    }
-                }); 
+            }, err => {
+                res.status(401).json({
+                    message: "User can not be found!", 
+                    data: err
+                });
             })
             .then(userUpdated => {
-                res.json({
-                    status: 200, 
+                res.status(200).json({
                     message: "User updated successfully!", 
                     data:{ 
                         user: userUpdated
                     }
                 }); 
+            }, err => {
+                res.status(401).json({
+                    message: "User can not be updated!", 
+                    data: err
+                });
             })
             .catch(err => {
-                return res.json({
-                    status: 401, 
+                return res.status(401).json({
                     message: "Invalid data!", 
                     data:{ 
                         err: err
@@ -97,9 +106,18 @@ module.exports = {
     },
 
     switchActivity: async function(req, res, next){
+
+
+
         return await userModel.findById(req.body.userId)
             .then(user => { 
                 user.isActive = !user.isActive; user.save() 
+            }, err => {
+                res.json({
+                    status: 401, 
+                    message: "User can not be found!", 
+                    data: err
+                });
             })
             .then(userUpdated => { 
                 res.json({
@@ -108,6 +126,12 @@ module.exports = {
                 data:{ 
                     user: userUpdated
                 }})
+            }, err => {
+                res.json({
+                    status: 401, 
+                    message: "User can not be updated!", 
+                    data: err
+                });
             })
             .catch(err => next(err));
     },
@@ -138,6 +162,12 @@ module.exports = {
                         user: users
                     }
                 }); 
+            }, err => {
+                res.json({
+                    status: 401, 
+                    message: "Users can not be found!", 
+                    data: err
+                });
             })
             .catch(err => next(err));
     },

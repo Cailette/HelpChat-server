@@ -32,10 +32,9 @@ const UserSchema = new Schema({
         default: false
     },
     representative: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId, 
         trim: true,
         default: null,
-        type: mongoose.Schema.Types.ObjectId, 
         ref: 'User'
     }
 });

@@ -9,6 +9,7 @@ const mongoose = require('./config/database');
 // routers 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var workHoursRouter = require('./routes/workHours');
 
 var app = express();
 require('dotenv').config();
@@ -34,6 +35,7 @@ app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/work-hours', workHoursRouter);
 
 app.get('/favicon.ico', function(req, res) {
   res.sendStatus(204);
