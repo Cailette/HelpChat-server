@@ -10,20 +10,20 @@ const ActivitySchema = new Schema({
         default: null,
         ref: 'User'
     },
-    hourFrom: {
-        type: Number,
+    from: {
+        type: Date,
         trim: true,  
         required: true,
     },
-    hourTo: {
-        type: Number,
-        trim: true,  
-        required: true,
-    },
-    day: {
+    to: {
         type: Date,
         trim: true,
-        required: true
+        default: null
+    },
+    inTime: {
+        type: Boolean,
+        trim: true,
+        default: true
     }
 });
 

@@ -1,5 +1,9 @@
 const userModel = require('../models/users');
+const activityModel = require('../models/activity');
+const workHoursModel = require('../models/workHours');
+const activityController = require('./activity');
 var bcrypt = require('bcryptjs');
+var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
@@ -27,7 +31,7 @@ module.exports = {
     authenticate: async function(req, res, next) {
         return await userModel.findOne({ email: req.body.email })
             .then(user => {
-                if(bcrypt.compareSync(req.body.password, user.password)) {
+                if(bcrypt.compare(req.body.password, user.password)) {
                     const token = jwt.sign({ id: user._id }, req.app.get('secretKey'), { expiresIn: '24h' });
                     res.status(200).json({
                         message: "User found successfully!", 
@@ -106,29 +110,29 @@ module.exports = {
     },
 
     switchActivity: async function(req, res, next){
-
-
-
         return await userModel.findById(req.body.userId)
-            .then(user => { 
-                user.isActive = !user.isActive; user.save() 
+            .then(user => {
+                if(user.isActive) {
+                    activityController.update(req, res, next);
+                } else {
+                    activityController.create(req, res, next);
+                }
+                user.isActive = !user.isActive; 
+                user.save() 
             }, err => {
-                res.json({
-                    status: 401, 
+                res.status(401).json({
                     message: "User can not be found!", 
                     data: err
                 });
             })
             .then(userUpdated => { 
-                res.json({
-                status: 200, 
+                res.status(200).json({
                 message: "User updated successfully!", 
                 data:{ 
                     user: userUpdated
                 }})
             }, err => {
-                res.json({
-                    status: 401, 
+                res.status(401).json({
                     message: "User can not be updated!", 
                     data: err
                 });
@@ -143,8 +147,7 @@ module.exports = {
         }
         return await userModel.deleteOne({ _id: req.params.AgentId ? req.params.AgentId : req.body.userId })
             .then(userDeleted => { 
-                res.json({
-                    status: 200, 
+                res.status(200).json({
                     message: "User deleted successfully!", 
                     data: null
                 });
@@ -155,16 +158,14 @@ module.exports = {
     getAll: async function(req, res, next) {
         return await userModel.find({ representative: req.body.userId }).select('-password')
             .then(users => { 
-                res.json({
-                    status: 200, 
+                res.status(200).json({
                     message: "Users found successfully!", 
                     data:{ 
                         user: users
                     }
                 }); 
             }, err => {
-                res.json({
-                    status: 401, 
+                res.status(401).json({
                     message: "Users can not be found!", 
                     data: err
                 });

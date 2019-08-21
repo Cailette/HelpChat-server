@@ -58,19 +58,39 @@ module.exports = {
     },
 
     getByAgentId: async function(req, res, next) {
-        return await workHoursModel.find({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayTo: null })
+        return await workHoursModel.find({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayTo: null})
             .select('-dayTo -agent -dayFrom')
             .sort('dayOfWeek')
             .then(workHours => {
                 res.json({
                     status: 200, 
-                    message: "Work Hours deleted successfully!", 
+                    message: "Work Hours found successfully!", 
                     data: workHours
                 });
             }, err => {
                 res.json({
                     status: 401, 
-                    message: "Work Hours can not be deleted!", 
+                    message: "Work Hours can not be found!", 
+                    data: err
+                });
+            })
+            .catch(err => next(err));
+    },
+
+    getDayByAgentId: async function(req, res, next) {
+        return await workHoursModel.find({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayOfWeek: req.body.dayOfWeek, dayTo: null })
+            .select('-dayTo -agent -dayFrom')
+            .sort('dayOfWeek')
+            .then(workHours => {
+                res.json({
+                    status: 200, 
+                    message: "Work Hours found successfully!", 
+                    data: workHours
+                });
+            }, err => {
+                res.json({
+                    status: 401, 
+                    message: "Work Hours can not be found!", 
                     data: err
                 });
             })
