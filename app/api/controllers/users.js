@@ -21,7 +21,8 @@ module.exports = {
             lastname: req.body.lastname, 
             email: req.body.email,
             password: req.body.password,
-            representative: req.params.addAgent ? req.body.userId : null })
+            representative: req.body.isRepresentative ? req.body.userId : null 
+        })
 
         if(!userInfo){
             return res.status(401).json({
@@ -45,7 +46,7 @@ module.exports = {
             });
         } 
         
-        const token = jwt.sign({ id: user._id }, req.app.get('secretKey'));
+        const token = jwt.sign({ id: user._id, isRepresentative: user.representative == null ? true : false }, req.app.get('secretKey'));
 
         return res.status(200).json({
             message: "User found successfully!", 

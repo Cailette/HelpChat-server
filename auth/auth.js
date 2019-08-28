@@ -9,6 +9,7 @@ module.exports = {
                 res.json({status:"error", message: err.message, data:null});
             }else{
                 req.body.userId = decoded.id;
+                req.body.isRepresentative = decoded.isRepresentative;
                 next();
             }
         });

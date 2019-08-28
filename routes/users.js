@@ -6,7 +6,7 @@ const authentication = require('../auth/auth');
 
 router.post('/register', userController.create);
 router.post('/authenticate', userController.authenticate);
-router.post('/user/:addAgent', authentication.authenticateUser, userController.create);
+router.post('/registerAgent', authentication.authenticateUser, userController.create);
 
 router.get('/user', authentication.authenticateUser, userController.getById);
 router.get('/:AgentId', authentication.authenticateUser, userController.getById);

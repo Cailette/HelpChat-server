@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const saltRounds = 10;
-const salt = '$2b$10$X4kv7j5ZcG39WgogSl16au';
 
 const Schema = mongoose.Schema;
 
@@ -40,7 +38,8 @@ const UserSchema = new Schema({
     }
 });
 
-UserSchema.pre('save', function(next){
+UserSchema.pre('save', async function(next){
+    const salt = await bcrypt.genSalt(10);
     this.password = bcrypt.hashSync(this.password, salt);
     next();
 });
