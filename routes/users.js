@@ -19,5 +19,4 @@ router.put('/:AgentId', authentication.authenticateUser, userController.updateBy
 router.delete('/user', authentication.authenticateUser, userController.delete);
 router.delete('/:AgentId', authentication.authenticateUser, userController.delete);
 
-
 module.exports = router;

@@ -174,4 +174,26 @@ module.exports = {
             }
         }); 
     },
+
+    getActiveUsers: async function(req, res, next) {
+        const users = await userModel.find( 
+            { $and : [
+                { $or : [ { representative: req.params.licenceID }, { _id: req.params.licenceID } ] },
+                { isActive : true }
+            ]
+            } ).select('-password');
+
+        if(!users || users.length == 0) {
+            return res.status(404).json({
+                message: "Users can not be found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Users found successfully!", 
+            data:{ 
+                user: users
+            }
+        }); 
+    },
 }
