@@ -196,4 +196,42 @@ module.exports = {
             }
         }); 
     },
+
+    getRandomWorkingAgent: async function(req, res, next) {
+        const users = await userModel.find( 
+            { $and : [
+                { $or : [ { representative: req.params.licenceID }, { _id: req.params.licenceID } ] },
+                { isActive : true }
+            ]
+            } ).select('-password');
+
+        if(users.length == 0) {
+            return res.status(404).json({
+                message: "Users can not be found!"
+            });
+        }
+        
+        const now = new Date(Date.now());
+        const workingUsers = [];
+        for(var user of users){
+            const workHours = await workHoursModel.findOne({ agent: user._id, dayOfWeek: now.getDay(), dayTo: null });
+            if((workHours && now.getHours() >= workHours.hourFrom && now.getHours() < workHours.hourTo) || !workHours) {
+                workingUsers.push(user);        
+            }
+        }
+
+        if(workingUsers.length == 0) {
+            return res.status(404).json({
+                message: "Users can not be found!"
+            });
+        }
+
+        var workingAgent = workingUsers[Math.floor(Math.random() * workingUsers.length)];
+        return res.status(200).json({
+            message: "User found successfully!", 
+            data:{ 
+                user: workingAgent
+            }
+        }); 
+    },
 }

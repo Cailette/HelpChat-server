@@ -25,7 +25,7 @@ module.exports = {
 
         if(activity)
         {
-            if(workHours && now.getHours() <= workHours.hourTo) {
+            if(workHours && now.getHours() < workHours.hourTo) {
                 activity.inTime = false;
             }
             activity.to = now;
