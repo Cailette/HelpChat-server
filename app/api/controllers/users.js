@@ -32,7 +32,7 @@ module.exports = {
         
         return res.status(201).json({
             message: "User added successfully!", 
-            data: userInfo
+            user: userInfo
         });
     },
 
@@ -41,8 +41,7 @@ module.exports = {
 
         if(!user || !bcrypt.compare(req.body.password, user.password)){
             return res.status(401).json({
-                message: "Invalid mail or password!", 
-                data: null
+                message: "Invalid mail or password!"
             });
         } 
         
@@ -50,9 +49,7 @@ module.exports = {
 
         return res.status(200).json({
             message: "User found successfully!", 
-            data:{  
-                token: token 
-            }
+            token: token
         });
     },
 
@@ -67,9 +64,7 @@ module.exports = {
 
         return res.status(200).json({
             message: "User found successfully!", 
-            data:{ 
-                user: userInfo
-            }
+            user: userInfo
         }); 
     },
 
@@ -98,9 +93,7 @@ module.exports = {
 
         return res.status(200).json({
             message: "User updated successfully!", 
-            data:{ 
-                user: userUpdated
-            }
+            user: userUpdated
         }); 
     },
 
@@ -130,9 +123,7 @@ module.exports = {
 
         return res.status(200).json({
             message: "User updated successfully!", 
-            data:{ 
-                user: userUpdated
-            }
+            user: userUpdated
         })
     },
 
@@ -146,14 +137,12 @@ module.exports = {
 
         if(!userDeleted) {
             return res.status(401).json({
-                message: "User can not be deleted!", 
-                data: null
+                message: "User can not be deleted!"
             });
         }
 
         return res.status(200).json({
-                message: "User deleted successfully!", 
-                data: null
+                message: "User deleted successfully!"
             });
     },
 
@@ -169,9 +158,7 @@ module.exports = {
 
         return res.status(200).json({
             message: "Users found successfully!", 
-            data:{ 
-                user: users
-            }
+            users: users
         }); 
     },
 
@@ -191,10 +178,8 @@ module.exports = {
 
         return res.status(200).json({
             message: "Users found successfully!", 
-            data:{ 
-                user: users
-            }
-        }); 
+            users: users
+        });
     },
 
     getRandomWorkingAgent: async function(req, res, next) {
@@ -229,9 +214,7 @@ module.exports = {
         var workingAgent = workingUsers[Math.floor(Math.random() * workingUsers.length)];
         return res.status(200).json({
             message: "User found successfully!", 
-            data:{ 
-                user: workingAgent
-            }
+            user: workingAgent
         }); 
     },
 }

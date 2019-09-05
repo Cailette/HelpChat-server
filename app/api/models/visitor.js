@@ -7,7 +7,29 @@ const VisitorSchema = new Schema({
         type: Date,
         trim: true,  
         default: Date.now
-    }
+    },
+    geoLocation: {
+        lat: {
+            type: String,
+            trim: true,  
+            default: "Brak danych"
+        }, 
+        lng: {
+            type: String,
+            trim: true,  
+            default: "Brak danych"
+        }
+    },
+    browserSoftware: {
+        type: String,
+        trim: true,  
+        default: "Brak danych"
+    },
+    operatingSoftware: {
+        type: String,
+        trim: true,  
+        default: "Brak danych"
+    },
 });
 
 module.exports = mongoose.model('Visitor', VisitorSchema);

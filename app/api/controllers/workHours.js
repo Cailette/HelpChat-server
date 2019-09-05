@@ -16,16 +16,14 @@ module.exports = {
             dayOfWeek: req.body.dayOfWeek })
 
         if(!newWorkHours) {
-            return res.json({
-                status: 401, 
+            return res.status(401).json({
                 message: "Work Hours can not be added!"
             });
         }
             
-        return res.json({
-            status: 200, 
+        return res.status(200).json({
             message: "Work Hours added successfully!", 
-            data: newWorkHours
+            workHours: newWorkHours
         });
     },
 
@@ -33,8 +31,7 @@ module.exports = {
         const workHours = await workHoursModel.findById(req.params.WorkHoursId)
         if(!workHours)
         {
-            return res.json({
-                status: 404, 
+            return res.status(404).json({
                 message: "Work Hours not found!"
             });
         }
@@ -43,16 +40,15 @@ module.exports = {
         const updatedWorkHours = await workHours.save();
 
         if (!updatedWorkHours) {
-            return res.json({
-                status: 401, 
+            return res.status(401).json({
                 message: "Work Hours can not be updated !"
             });
         }
 
-        return res.json({
+        return res.status(200).json({
             status: 200, 
             message: "Work Hours updated successfully!", 
-            data: workHours
+            workHours: workHours
         });
     },
 
@@ -63,16 +59,15 @@ module.exports = {
             
         if(!workHours)
         {
-            return res.json({
-                status: 404, 
+            return res.status(404).json({
                 message: "Work Hours not found!"
             });
         }
 
-        return res.json({
+        return res.status(200).json({
             status: 200, 
             message: "Work Hours found successfully!", 
-            data: workHours
+            workHours: workHours
         });
     },
 
@@ -83,16 +78,14 @@ module.exports = {
             
         if(!workHours)
         {
-            return res.json({
-                status: 404, 
+            return res.status(404).json({
                 message: "Work Hours not found!"
             });
         }
 
-        return res.json({
-            status: 200, 
+        return res.status(200).json({
             message: "Work Hours found successfully!", 
-            data: workHours
+            workHours: workHours
         });
     }
 }
