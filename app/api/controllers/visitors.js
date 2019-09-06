@@ -3,12 +3,16 @@ var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-    create: async function(req, res, next) {
+    create: async function(req, res) {
             const visitorInfo = await visitorModel.create({ 
-                geoLocation: req.body.geoLocation, 
+                geoLocation: {
+                    lat: req.body.geoLocation.lat, 
+                    lng: req.body.geoLocation.lng
+                },
                 ipAddress: req.body.ipAddress, 
                 browserSoftware: req.body.browserSoftware,
                 operatingSoftware: req.body.operatingSoftware,
+                representative: req.body.representative
             })
 
         if(!visitorInfo){
@@ -17,11 +21,11 @@ module.exports = {
             });
         }
         
-        const token = jwt.sign({ id: visitorInfo._id}, req.app.get('secretKey'));
+        const token = jwt.sign({ id: visitorInfo._id, representative: visitorInfo.representative}, req.app.get('secretKey'));
         
         return res.status(201).json({
             message: "Visitor added successfully!", 
-            data: userInfo, 
+            data: visitorInfo, 
             token: token
         });
     },

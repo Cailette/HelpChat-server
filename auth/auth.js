@@ -22,11 +22,16 @@ module.exports = {
     authenticateVisitor: function(req, res, next) {
         jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
             if (err) {
-                visitorsController.create(req, res, next);
+                res.json({
+                    status:"error", 
+                    message: err.message, 
+                    data: null
+                });
             }else{
                 req.body.visitorId = decoded.id;
+                req.body.representative = decoded.representative;
                 next();
             }
         });
-    }
+    },
 }

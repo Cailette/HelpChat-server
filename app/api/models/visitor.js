@@ -30,6 +30,12 @@ const VisitorSchema = new Schema({
         trim: true,  
         default: "Brak danych"
     },
+    representative: {
+        type: mongoose.Schema.Types.ObjectId, 
+        trim: true,
+        default: null,
+        ref: 'User'
+    }
 });
 
 module.exports = mongoose.model('Visitor', VisitorSchema);

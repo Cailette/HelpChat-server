@@ -185,7 +185,7 @@ module.exports = {
     getRandomWorkingAgent: async function(req, res, next) {
         const users = await userModel.find( 
             { $and : [
-                { $or : [ { representative: req.params.licenceID }, { _id: req.params.licenceID } ] },
+                { $or : [ { representative: req.body.representative }, { _id: req.body.representative } ] },
                 { isActive : true }
             ]
             } ).select('-password');
