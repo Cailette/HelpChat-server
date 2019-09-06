@@ -41,8 +41,39 @@ module.exports = {
             });
         } 
         
-        const now = new Date(Date.now());
-        visitor.lastVisit = now;
+
+        const visitorUpdated = await visitor.save();
+
+        if(!visitorUpdated) {
+            return res.status(401).json({
+                message: "Visitor can not be updated!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Visitor updated successfully!", 
+            data: visitorUpdated
+        }); 
+    },
+
+    // on disconnect update data for last visit
+    update: async function(req, res, next) {
+        const visitor = await visitorModel.findById(req.body.visitorId)
+
+        if(!visitor){
+            return res.status(401).json({
+                message: "Visitor not exist!", 
+                data: null
+            });
+        } 
+
+        if(visitor.isActive){
+            const now = new Date(Date.now());
+            visitor.lastVisit = now;
+            visitor.isActive = false;
+        } else {
+            visitor.isActive = true;
+        }
 
         const visitorUpdated = await visitor.save();
 

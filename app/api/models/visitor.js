@@ -30,6 +30,11 @@ const VisitorSchema = new Schema({
         trim: true,  
         default: "Brak danych"
     },
+    isActive: {
+        type: Boolean,
+        trim: true,
+        default: true
+    },
     representative: {
         type: mongoose.Schema.Types.ObjectId, 
         trim: true,
