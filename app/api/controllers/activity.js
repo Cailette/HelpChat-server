@@ -1,4 +1,4 @@
-const activityModel = require('../models/activity');
+const activityModel = require('../models/activities');
 const workHoursModel = require('../models/workHours');
 
 module.exports = {

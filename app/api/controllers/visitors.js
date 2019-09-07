@@ -1,4 +1,4 @@
-const visitorModel = require('../models/visitor');
+const visitorModel = require('../models/visitors');
 var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
@@ -16,7 +16,7 @@ module.exports = {
             })
 
         if(!visitorInfo){
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "Visitor can not be added!"
             });
         }
@@ -25,7 +25,7 @@ module.exports = {
         
         return res.status(201).json({
             message: "Visitor added successfully!", 
-            data: visitorInfo, 
+            visitor: visitorInfo, 
             token: token
         });
     },
@@ -35,7 +35,7 @@ module.exports = {
         const visitor = await visitorModel.findById(req.body.visitorId)
 
         if(!visitor){
-            return res.status(401).json({
+            return res.status(404).json({
                 message: "Visitor not exist!", 
                 data: null
             });
@@ -45,23 +45,22 @@ module.exports = {
         const visitorUpdated = await visitor.save();
 
         if(!visitorUpdated) {
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "Visitor can not be updated!"
             });
         }
 
         return res.status(200).json({
             message: "Visitor updated successfully!", 
-            data: visitorUpdated
+            visitor: visitorUpdated
         }); 
     },
 
-    // on disconnect update data for last visit
     update: async function(req, res, next) {
         const visitor = await visitorModel.findById(req.body.visitorId)
 
         if(!visitor){
-            return res.status(401).json({
+            return res.status(404).json({
                 message: "Visitor not exist!", 
                 data: null
             });
@@ -78,29 +77,44 @@ module.exports = {
         const visitorUpdated = await visitor.save();
 
         if(!visitorUpdated) {
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "Visitor can not be updated!"
             });
         }
 
         return res.status(200).json({
             message: "Visitor updated successfully!", 
-            data: visitorUpdated
+            visitor: visitorUpdated
         }); 
     },
 
     getById: async function(req, res, next) {
-        const visitorInfo = await visitorModel.findById(req.body.visitorId)
+        const visitorInfo = await visitorModel.findById(req.params.VisitorId)
 
         if(!visitorInfo) {
-            return res.status(401).json({
+            return res.status(404).json({
                 message: "Visitor can not be found!"
             });
         }
 
         return res.status(200).json({
             message: "Visitor found successfully!", 
-            data: visitorInfo
+            visitor: visitorInfo
+        }); 
+    },
+
+    getAll: async function(req, res, next) {
+        const visitorsInfo = await visitorModel.find({representative: req.body.isRepresentative? req.body.userId: req.body.representative, isActive: true})
+
+        if(!visitorsInfo) {
+            return res.status(404).json({
+                message: "Visitors can not be found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Visitors found successfully!", 
+            visitors: visitorsInfo
         }); 
     },
 }

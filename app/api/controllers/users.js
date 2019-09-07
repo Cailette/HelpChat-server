@@ -1,5 +1,5 @@
 const userModel = require('../models/users');
-const activityModel = require('../models/activity');
+const activityModel = require('../models/activities');
 const workHoursModel = require('../models/workHours');
 const activityController = require('./activity');
 var bcrypt = require('bcryptjs');
@@ -45,7 +45,11 @@ module.exports = {
             });
         } 
         
-        const token = jwt.sign({ id: user._id, isRepresentative: user.representative == null ? true : false }, req.app.get('secretKey'));
+        const token = jwt.sign({ 
+            id: user._id, 
+            isRepresentative: user.representative == null ? true : false,
+            representative: user.representative
+        }, req.app.get('secretKey'));
 
         return res.status(200).json({
             message: "User found successfully!", 

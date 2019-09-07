@@ -14,6 +14,7 @@ module.exports = {
             }else{
                 req.body.userId = decoded.id;
                 req.body.isRepresentative = decoded.isRepresentative;
+                req.body.representative = decoded.representative;
                 next();
             }
         });

@@ -19,4 +19,6 @@ router.put('/:AgentId', authentication.authenticateUser, userController.updateBy
 router.delete('/user', authentication.authenticateUser, userController.delete);
 router.delete('/:AgentId', authentication.authenticateUser, userController.delete);
 
+router.get('/working-agent', authentication.authenticateVisitor, userController.getRandomWorkingAgent);
+
 module.exports = router;
