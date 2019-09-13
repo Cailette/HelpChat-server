@@ -6,13 +6,18 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 const mongoose = require('./config/database');
 
+var app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const socket = require('./routes/socket.js')
+io.sockets.on('connection', socket);
+
 // routers 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var workHoursRouter = require('./routes/workHours');
-var visitorsRouter = require('./routes/visitors');
+var visitorsRouter = require('./routes/visitors')(io);
 
-var app = express();
 require('dotenv').config();
 app.set('secretKey', 'HelpChatRestApi'); 
 
@@ -42,10 +47,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
-
-app.get('/favicon.ico', function(req, res) {
-  res.sendStatus(204);
-});
 
 app.use(function(req, res, next) {
   next(createError(404));
