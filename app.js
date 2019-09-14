@@ -7,16 +7,18 @@ var bodyParser = require('body-parser');
 const mongoose = require('./config/database');
 
 var app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const socket = require('./routes/socket.js')
-io.sockets.on('connection', socket);
+
+// const http = require('http').Server(app);
+
+// const io = require('socket.io')(http);
+// const socket = require('./routes/socket.js')
+// io.sockets.on('connection', socket);
 
 // routers 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var workHoursRouter = require('./routes/workHours');
-var visitorsRouter = require('./routes/visitors')(io);
+var visitorsRouter = require('./routes/visitors');
 
 require('dotenv').config();
 app.set('secretKey', 'HelpChatRestApi'); 
@@ -47,21 +49,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
+// app.use('/socket.io', require('./auth/auth').authenticateSocket);
+  
 
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-// error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
 
 // express doesn't consider not found 404 as an error so we need to handle 404 explicitly
 // handle 404 error
