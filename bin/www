@@ -24,7 +24,7 @@ var server = http.createServer(app);
 
 var io = require('socket.io').listen(server);
 
-io.use(require("../auth/auth").authenticateSocket);
+// io.use(require("../auth/auth").authenticateSocket);
  
 require('../routes/socket')(io);
 

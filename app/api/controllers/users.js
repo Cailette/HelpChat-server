@@ -48,7 +48,7 @@ module.exports = {
         const token = jwt.sign({ 
             id: user._id, 
             isRepresentative: user.representative == null ? true : false,
-            representative: user.representative
+            representative: user.representative? user.representative: user._id
         }, req.app.get('secretKey'));
 
         return res.status(200).json({

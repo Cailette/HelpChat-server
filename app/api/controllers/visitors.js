@@ -89,7 +89,7 @@ module.exports = {
     },
 
     getById: async function(req, res, next) {
-        const visitorInfo = await visitorModel.findById(req.params.VisitorId)
+        const visitorInfo = await visitorModel.findById(req.params.VisitorId ? req.params.VisitorId : req.body.visitorId)
 
         if(!visitorInfo) {
             return res.status(404).json({

@@ -8,5 +8,6 @@ router.post('/', visitorsController.create);
 router.put('/', authentication.authenticateVisitor, visitorsController.update);
 router.get('/', authentication.authenticateUser, visitorsController.getAll);
 router.get('/:VisitorId', authentication.authenticateUser, visitorsController.getById);
+router.get('/visitor', authentication.authenticateVisitor, visitorsController.getById);
 
 module.exports = router;
