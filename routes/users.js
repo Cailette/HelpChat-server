@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
 
-const userController = require('../app/api/controllers/users');
-const authentication = require('../auth/auth');
+const userController = require('../controllers/users');
+const auth = require('../auth/auth');
 
 router.post('/register', userController.create);
-router.post('/authenticate', userController.authenticate);
-router.post('/registerAgent', authentication.authenticateUser, userController.create);
+router.post('/authenticate', auth.authenticate);
+router.post('/registerAgent', auth.authorizateUser, userController.create);
 
-router.get('/user', authentication.authenticateUser, userController.getById);
-router.get('/:AgentId', authentication.authenticateUser, userController.getById);
-router.get('/', authentication.authenticateUser, userController.getAll);
+router.get('/user', auth.authorizateUser, userController.getById);
+router.get('/:AgentId', auth.authorizateUser, userController.getById);
+router.get('/', auth.authorizateUser, userController.getAll);
 
-router.put('/activity', authentication.authenticateUser, userController.updateActivity);
-router.put('/user', authentication.authenticateUser, userController.updateById);
-router.put('/:AgentId', authentication.authenticateUser, userController.updateById);
+router.put('/activity', auth.authorizateUser, userController.updateActivity);
+router.put('/user', auth.authorizateUser, userController.updateById);
+router.put('/:AgentId', auth.authorizateUser, userController.updateById);
 
-router.delete('/user', authentication.authenticateUser, userController.delete);
-router.delete('/:AgentId', authentication.authenticateUser, userController.delete);
+router.delete('/user', auth.authorizateUser, userController.delete);
+router.delete('/:AgentId', auth.authorizateUser, userController.delete);
 
-router.get('/working-agent', authentication.authenticateVisitor, userController.getRandomWorkingAgent);
+router.get('/working-agent', auth.authorizateVisitor, userController.getRandomWorkingAgent);
 
 module.exports = router;

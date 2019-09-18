@@ -36,27 +36,6 @@ module.exports = {
         });
     },
 
-    authenticate: async function(req, res, next) {
-        const user = await userModel.findOne({ email: req.body.email })
-
-        if(!user || !bcrypt.compare(req.body.password, user.password)){
-            return res.status(401).json({
-                message: "Invalid mail or password!"
-            });
-        } 
-        
-        const token = jwt.sign({ 
-            id: user._id, 
-            isRepresentative: user.representative == null ? true : false,
-            representative: user.representative? user.representative: user._id
-        }, req.app.get('secretKey'));
-
-        return res.status(200).json({
-            message: "User found successfully!", 
-            token: token
-        });
-    },
-
     getById: async function(req, res, next) {
         const userInfo = await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId).select('-password')
 

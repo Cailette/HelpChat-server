@@ -29,6 +29,22 @@ const ChatSchema = new Schema({
         type: Boolean,
         trim: true,
         default: true
+    },
+    messages: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Chat'
+    }]
+});
+
+ChatSchema.post('save', async function(){
+    const Visitor = require('./visitors');
+
+    const visitor = await Visitor.findById(this.visitor);
+    if(visitor.chats.indexOf(visitor._id) === -1){
+        visitor.chats.push(this._id);
+        visitor.save((err) => {
+            console.log(err)
+        });
     }
 });
 

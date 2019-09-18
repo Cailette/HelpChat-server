@@ -8,12 +8,6 @@ const mongoose = require('./config/database');
 
 var app = express();
 
-// const http = require('http').Server(app);
-
-// const io = require('socket.io')(http);
-// const socket = require('./routes/socket.js')
-// io.sockets.on('connection', socket);
-
 // routers 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -49,7 +43,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
-// app.use('/socket.io', require('./auth/auth').authenticateSocket);
   
 
 app.use(function(req, res, next) {

@@ -29,8 +29,7 @@ module.exports = {
             token: token
         });
     },
-
-    // on disconnect update data for last visit
+    
     updateLastVisit: async function(req, res, next) {
         const visitor = await visitorModel.findById(req.body.visitorId)
 

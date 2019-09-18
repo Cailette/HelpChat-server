@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const visitorsController = require('../app/api/controllers/visitors');
-const authentication = require('../auth/auth');
+const visitorsController = require('../controllers/visitors');
+const auth = require('../auth/auth');
 
 router.post('/', visitorsController.create);
-router.put('/', authentication.authenticateVisitor, visitorsController.update);
-router.get('/', authentication.authenticateUser, visitorsController.getAll);
-router.get('/:VisitorId', authentication.authenticateUser, visitorsController.getById);
-router.get('/visitor', authentication.authenticateVisitor, visitorsController.getById);
+router.put('/', auth.authorizateVisitor, visitorsController.update);
+router.get('/', auth.authorizateUser, visitorsController.getAll);
+router.get('/:VisitorId', auth.authorizateUser, visitorsController.getById);
+router.get('/visitor', auth.authorizateVisitor, visitorsController.getById);
 
 module.exports = router;

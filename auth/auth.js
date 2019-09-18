@@ -1,7 +1,28 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-    authenticateUser: function(req, res, next) {
+    authenticate: async function(req, res, next) {
+        const user = await userModel.findOne({ email: req.body.email })
+
+        if(!user || !bcrypt.compare(req.body.password, user.password)){
+            return res.status(401).json({
+                message: "Invalid mail or password!"
+            });
+        } 
+        
+        const token = jwt.sign({ 
+            id: user._id, 
+            isRepresentative: user.representative == null ? true : false,
+            representative: user.representative? user.representative: user._id
+        }, req.app.get('secretKey'));
+
+        return res.status(200).json({
+            message: "User found successfully!", 
+            token: token
+        });
+    },
+
+    authorizateUser: function(req, res, next) {
         jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
             if (err) {
                 res.json({
@@ -13,13 +34,12 @@ module.exports = {
                 req.body.userId = decoded.id;
                 req.body.isRepresentative = decoded.isRepresentative;
                 req.body.representative = decoded.representative;
-                req.body.isAgent = true;
                 next();
             }
         });
     },
     
-    authenticateVisitor: function(req, res, next) {
+    authorizateVisitor: function(req, res, next) {
         jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
             if (err) {
                 res.json({
@@ -30,21 +50,8 @@ module.exports = {
             }else{
                 req.body.visitorId = decoded.id;
                 req.body.representative = decoded.representative;
-                req.body.isVisitor = true;
                 next();
             }
-        });
-    },
-    
-    authenticateSocket: function(socket, next) {
-        const token = socket.handshake.query.token;
-        const sender = socket.handshake.query.sender;
-        jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
-          if(err) return next(err);
-          socket.id = decoded.id;
-          socket.representative = decoded.representative;
-          socket.sender = sender;
-          next();
         });
     },
 }

@@ -22,10 +22,7 @@ app.set('port', port);
 var server = http.createServer(app);
 
 
-var io = require('socket.io').listen(server);
-
-// io.use(require("../auth/auth").authenticateSocket);
- 
+var io = require('socket.io').listen(server); 
 require('../routes/socket')(io);
 
 /**

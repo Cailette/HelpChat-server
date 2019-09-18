@@ -27,4 +27,16 @@ const MessageSchema = new Schema({
     }
 });
 
+MessageSchema.post('save', async function(){
+    const Chat = require('./chats');
+
+    const chat = await Chat.findById(this.chat);
+    if(chat.messages.indexOf(chat._id) === -1){
+        chat.messages.push(this._id);
+        chat.save((err) => {
+            console.log(err)
+        });
+    }
+});
+
 module.exports = mongoose.model('Message', MessageSchema);

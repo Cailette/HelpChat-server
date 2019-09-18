@@ -1,8 +1,3 @@
-const userModel = require('../app/api/models/users');
-const visitorModel = require('../app/api/models/visitors');
-const messageModel = require('../app/api/models/messages');
-const chatModel = require('../app/api/models/chats');
-
 module.exports = (io) => {
   io.on('connection', (socket) => {
     console.log("CONNECTION: " + socket);
@@ -18,11 +13,10 @@ module.exports = (io) => {
     }
 
     function joinRoom(room, callback) {
-      console.log("joinRoom: " + room)
-      socket.room = room;
+      socket.location = room;
       socket.join(room);
-      console.log("socket.room: " + socket.room)
-      io.in(socket.room).emit('locationChange', "New visitor");
+      console.log("socket.room: " + socket.location)
+      io.in(socket.location).emit('locationChange', "New visitor");
     }
 
     function disconnect() {

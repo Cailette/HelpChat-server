@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
 const VisitorSchema = new Schema({
@@ -40,7 +39,11 @@ const VisitorSchema = new Schema({
         trim: true,
         default: null,
         ref: 'User'
-    }
+    },
+    chats: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Chat'
+    }]
 });
 
 module.exports = mongoose.model('Visitor', VisitorSchema);
