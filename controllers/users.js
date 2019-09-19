@@ -2,9 +2,7 @@ const userModel = require('../models/users');
 const activityModel = require('../models/activities');
 const workHoursModel = require('../models/workHours');
 const activityController = require('./activity');
-var bcrypt = require('bcryptjs');
 var moment = require('moment');
-const jwt = require('jsonwebtoken');
 
 module.exports = {
     create: async function(req, res, next) {
@@ -52,10 +50,9 @@ module.exports = {
     },
 
     updateById: async function(req, res, next) {
-
         const user = await userModel.findById(req.params.AgentId ? req.params.AgentId : req.body.userId)
 
-        if(!userInfo) {
+        if(!user) {
             return res.status(401).json({
                 message: "User can not be found!"
             });
