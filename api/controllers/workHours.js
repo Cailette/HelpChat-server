@@ -1,21 +1,9 @@
-const workHoursModel = require('../../database/models/workHours');
+const workHoursService = require('../../buisnessLogic/services/workHours');
 
 module.exports = {
-    create: async function(req, res, next) {
-        const workHour = await workHoursModel.findOne({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayOfWeek: req.body.dayOfWeek, dayTo: null })
-        if(workHour)
-        {
-            workHour.dayTo = Date.now();
-            await workHour.save();
-        }
-
-        const newWorkHours = await workHoursModel.create({ 
-            agent: req.params.AgentId ? req.params.AgentId : req.body.userId,
-            hourFrom: req.body.hourFrom,
-            hourTo: req.body.hourTo,
-            dayOfWeek: req.body.dayOfWeek })
-
-        if(!newWorkHours) {
+    create: async function(req, res) {
+        const workHour = await workHoursService.create(req.params.AgentId ? req.params.AgentId : req.body.userId, req.body.hourFrom, req.body.hourTo, req.body.dayOfWeek)
+        if(workHour) {
             return res.status(401).json({
                 message: "Work Hours can not be added!"
             });
@@ -27,17 +15,16 @@ module.exports = {
         });
     },
 
-    updateDayTo: async function(req, res, next) {
-        const workHours = await workHoursModel.findById(req.params.WorkHoursId)
-        if(!workHours)
-        {
+    updateDayTo: async function(req, res) {
+        const workHours = await workHoursService.findById(req.params.WorkHoursId)
+
+        if(!workHours) {
             return res.status(404).json({
                 message: "Work Hours not found!"
             });
         }
 
-        workHours.dayTo = Date.now();
-        const updatedWorkHours = await workHours.save();
+        const updatedWorkHours = await workHoursService.updateDayTo(workHours)
 
         if (!updatedWorkHours) {
             return res.status(401).json({
@@ -48,17 +35,14 @@ module.exports = {
         return res.status(200).json({
             status: 200, 
             message: "Work Hours updated successfully!", 
-            workHours: workHours
+            workHours: updatedWorkHours
         });
     },
 
-    getByAgentId: async function(req, res, next) {
-        const workHours = await workHoursModel.find({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayTo: null})
-            .select('-dayTo -agent -dayFrom')
-            .sort('dayOfWeek')
+    getByAgentId: async function(req, res) {
+        const workHours = await workHoursService.findByUserId(req.params.AgentId ? req.params.AgentId : req.body.userId);
             
-        if(!workHours)
-        {
+        if(!workHours) {
             return res.status(404).json({
                 message: "Work Hours not found!"
             });
@@ -71,13 +55,10 @@ module.exports = {
         });
     },
 
-    getDayByAgentId: async function(req, res, next) {
-        const workHours = await workHoursModel.find({ agent: req.params.AgentId ? req.params.AgentId : req.body.userId, dayOfWeek: req.body.dayOfWeek, dayTo: null })
-            .select('-dayTo -agent -dayFrom')
-            .sort('dayOfWeek')
+    getDayByAgentId: async function(req, res) {
+        const workHours = await workHoursService.findByUserIdAndDay(req.params.AgentId ? req.params.AgentId : req.body.userId, req.body.dayOfWeek)
             
-        if(!workHours)
-        {
+        if(!workHours) {
             return res.status(404).json({
                 message: "Work Hours not found!"
             });

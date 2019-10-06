@@ -23,6 +23,10 @@ module.exports = {
         return await workHours.save();
     },
 
+    findById: async function(id) {
+        return await workHoursModel.findById(id);
+    },
+
     findByUserId: async function(id) {
         return await workHoursModel.find({ agent: id, dayTo: null})
             .select('-dayTo -agent -dayFrom')

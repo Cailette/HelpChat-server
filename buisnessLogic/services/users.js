@@ -1,8 +1,5 @@
 const userModel = require('../../database/models/users');
-const activityModel = require('../../database/models/activities');
 const workHoursModel = require('../../database/models/workHours');
-const activityController = require('./activity');
-var moment = require('moment');
 
 module.exports = {
     create: async function(firstname, lastname, email, password, isRepresentative) {

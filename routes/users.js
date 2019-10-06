@@ -3,10 +3,9 @@ const router = express.Router();
 
 const userController = require('../api/controllers/users');
 const authorizate = require('../BuisnessLogic/auth/authorizate');
-const authenticate = require('../BuisnessLogic/auth/authenticate');
 
 router.post('/register', userController.create);
-// router.post('/authenticate', authenticate.authenticate);
+router.post('/authenticate', userController.login);
 router.post('/registerAgent', authorizate.authorizate, userController.create);
 
 router.get('/user', authorizate.authorizate, userController.getById);

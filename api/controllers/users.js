@@ -1,7 +1,6 @@
 const userService = require('../../buisnessLogic/services/users');
 const activityService = require('../../buisnessLogic/services/activity');
-const workHoursService = require('../../buisnessLogic/services/workHours');
-var moment = require('moment');
+const authenticate = require('../../BuisnessLogic/auth/authenticate');
 
 module.exports = {
     create: async function(req, res) {
@@ -33,6 +32,29 @@ module.exports = {
         });
     },
 
+    login: async function(req, res) {
+        const user = await authenticate.authenticate(await userService.findByEmail(req.body.email), req.body.password, req.app.get('secretKey'));
+        
+        if(!user){
+            return res.status(404).json({
+                message: "Invalid mail or password!"
+            });
+        } 
+        
+        const token = await authenticate.generateToken(user._id, user.representative? user.representative: user._id, req.app.get('secretKey'));
+
+        if(!token){
+            return res.status(400).json({
+                message: "Token error."
+            });
+        } 
+
+        return res.status(200).json({
+            message: "User login successfully!", 
+            token: token
+        });
+    },
+
     getById: async function(req, res) {
         const user = await userService.findById(req.params.AgentId ? req.params.AgentId : req.body.id);
 
@@ -48,7 +70,7 @@ module.exports = {
         });
     },
 
-    updateById: async function(req, res, next) {
+    updateById: async function(req, res) {
         const user = await userService.findById(req.params.AgentId ? req.params.AgentId : req.body.userId)
 
         if(!user) {
@@ -77,7 +99,7 @@ module.exports = {
         }); 
     },
 
-    updateActivity: async function(req, res, next){
+    updateActivity: async function(req, res){
         const user = await userService.findById(req.body.userId)
 
         if(!user) {
@@ -107,7 +129,7 @@ module.exports = {
     },
 
     // POTRZEBA USUWANIA PRZEDSTAWICIELA RÓWNIEŻ!!!
-    delete: async function(req, res, next){
+    delete: async function(req, res){
         // if(!req.params.AgentId){
         //     const rest = await userService.deleteMany({ representative: req.body.userId });
         // }
@@ -125,7 +147,7 @@ module.exports = {
         });
     },
 
-    getAll: async function(req, res, next) {
+    getAll: async function(req, res) {
         const users = await userService.findAllByRepresentative(req.body.userId)
 
         if(!users) {
@@ -140,7 +162,7 @@ module.exports = {
         }); 
     },
 
-    getActiveUsers: async function(req, res, next) {
+    getActiveUsers: async function(req, res) {
         const users = await userService.findActiveUsersByRepresentative(req.body.representative);
         
         if(!users || users.length === 0) {
@@ -155,7 +177,7 @@ module.exports = {
         });
     },
 
-    getRandomWorkingAgent: async function(req, res, next) {
+    getRandomWorkingAgent: async function(req, res) {
         const user = await userService.findRandomWorkingUserByRepresentative(req.body.representative)
         
         if(users.length == 0) {
