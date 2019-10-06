@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-const mongoose = require('./config/database');
+const mongoose = require('./Database/database');
 
 var app = express();
 

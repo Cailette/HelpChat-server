@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const visitorsController = require('../controllers/visitors');
-const auth = require('../auth/auth');
+const visitorsController = require('../api/controllers/visitors');
+const userController = require('../api/controllers/users');
+const authorizate = require('../BuisnessLogic/auth/authorizate');
 
 router.post('/', visitorsController.create);
-router.put('/', auth.authorizateVisitor, visitorsController.update);
-router.get('/', auth.authorizateUser, visitorsController.getAll);
-router.get('/:VisitorId', auth.authorizateUser, visitorsController.getById);
-router.get('/visitor', auth.authorizateVisitor, visitorsController.getById);
+router.put('/', authorizate.authorizate, visitorsController.update);
+router.get('/', authorizate.authorizate, visitorsController.getAll);
+router.get('/:VisitorId', authorizate.authorizate, visitorsController.getById);
+router.get('/visitor', authorizate.authorizate, visitorsController.getById);
+
+router.get('/found-agent', authorizate.authorizate, userController.getRandomWorkingAgent);
 
 module.exports = router;

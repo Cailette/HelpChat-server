@@ -1,4 +1,4 @@
-const workHoursModel = require('../models/workHours');
+const workHoursModel = require('../../database/models/workHours');
 
 module.exports = {
     create: async function(req, res, next) {

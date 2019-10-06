@@ -1,15 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const workHoursController = require('../controllers/workHours');
-const auth = require('../auth/auth');
+const workHoursController = require('../api/controllers/workHours');
+const authorizate = require('../BuisnessLogic/auth/authorizate');
 
-router.post('/:AgentId', auth.authorizateUser, workHoursController.create);
-router.post('/', auth.authorizateUser, workHoursController.create);
-
-router.get('/:AgentId', auth.authorizateUser, workHoursController.getByAgentId);
-router.get('/', auth.authorizateUser, workHoursController.getByAgentId);
-
-router.put('/:WorkHoursId', auth.authorizateUser, workHoursController.updateDayTo);
+router.post('/:AgentId', authorizate.authorizate, workHoursController.create);
+router.get('/:AgentId', authorizate.authorizate, workHoursController.getByAgentId);
+router.put('/:WorkHoursId', authorizate.authorizate, workHoursController.updateDayTo);
 
 module.exports = router;

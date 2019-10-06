@@ -1,4 +1,4 @@
-const visitorModel = require('../models/visitors');
+const visitorModel = require('../../database/models/visitors');
 var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
