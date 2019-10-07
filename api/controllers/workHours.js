@@ -2,9 +2,10 @@ const workHoursService = require('../../buisnessLogic/services/workHours');
 
 module.exports = {
     create: async function(req, res) {
-        const workHour = await workHoursService.create(req.params.AgentId ? req.params.AgentId : req.body.userId, req.body.hourFrom, req.body.hourTo, req.body.dayOfWeek)
-        if(workHour) {
-            return res.status(401).json({
+        const newWorkHours = await workHoursService.create(req.params.AgentId ? req.params.AgentId : req.body.id, req.body.hourFrom, req.body.hourTo, req.body.dayOfWeek)
+        
+        if(!newWorkHours) {
+            return res.status(400).json({
                 message: "Work Hours can not be added!"
             });
         }
@@ -40,7 +41,7 @@ module.exports = {
     },
 
     getByAgentId: async function(req, res) {
-        const workHours = await workHoursService.findByUserId(req.params.AgentId ? req.params.AgentId : req.body.userId);
+        const workHours = await workHoursService.findByUserId(req.params.AgentId ? req.params.AgentId : req.body.id);
             
         if(!workHours) {
             return res.status(404).json({
@@ -56,7 +57,7 @@ module.exports = {
     },
 
     getDayByAgentId: async function(req, res) {
-        const workHours = await workHoursService.findByUserIdAndDay(req.params.AgentId ? req.params.AgentId : req.body.userId, req.body.dayOfWeek)
+        const workHours = await workHoursService.findByUserIdAndDay(req.params.AgentId ? req.params.AgentId : req.body.id, req.body.dayOfWeek)
             
         if(!workHours) {
             return res.status(404).json({

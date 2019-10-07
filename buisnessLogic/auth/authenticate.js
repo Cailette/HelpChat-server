@@ -2,22 +2,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 module.exports = {
-    authenticateUser: async function(user, password, secretKey) {  
-        if(user.constructor.collection.name !== 'User') {
-            return;
-        }
-
-        if(!bcrypt.compare(password, user.password)){
-            return;
-        }
-
-        return jwt.sign({ 
-            id: user._id, 
-            representative: user.representative
-        }, secretKey);
+    //req.app.get('secretKey')
+    authenticate: async function(password, userPassword) {  
+        return bcrypt.compare(password, userPassword);
     },
 
     generateToken: async function(id, representative, secretKey){
-        return jwt.sign({ id: id, representative: representative}, secretKey);
+        return jwt.sign({ id: id, representative: representative}, secretKey.app.get('secretKey'));
     }
 }

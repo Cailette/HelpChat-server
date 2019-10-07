@@ -32,7 +32,7 @@ module.exports = {
     },
     
     update: async function(req, res) {
-        const visitor = await visitorService.findById(req.body.visitorId)
+        const visitor = await visitorService.findById(req.body.id)
 
         if(!visitor){
             return res.status(404).json({
@@ -56,7 +56,7 @@ module.exports = {
     },
 
     getById: async function(req, res) {
-        const visitorInfo = await visitorService.findById(req.params.VisitorId ? req.params.VisitorId : req.body.id)
+        const visitorInfo = await visitorService.findById(req.params.id ? req.params.id : req.body.id)
 
         if(!visitorInfo) {
             return res.status(404).json({
@@ -71,7 +71,7 @@ module.exports = {
     },
 
     getAll: async function(req, res) {
-        const visitorsInfo = await visitorService.findAllByRepresentative(req.body.isRepresentative? req.body.userId: req.body.representative)
+        const visitorsInfo = await visitorService.findAllByRepresentative(req.body.isRepresentative? req.body.id: req.body.representative)
 
         if(!visitorsInfo) {
             return res.status(404).json({

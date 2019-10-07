@@ -2,37 +2,41 @@ const userModel = require('../../database/models/users');
 const workHoursModel = require('../../database/models/workHours');
 
 module.exports = {
-    create: async function(firstname, lastname, email, password, isRepresentative) {
+    create: async function(firstname, lastname, email, password, representative) {
         return await userModel.create({ 
             firstname: firstname, 
             lastname: lastname, 
             email: email,
             password: password,
-            representative: isRepresentative ? userId : null 
-        })
+            representative: representative 
+        });
     },
 
     findByEmail: async function(email){
-        return await userModel.findOne({ email: email })
+        return await userModel.findOne({ email: email });
     },
 
     findById: async function(id) {
-        return await userModel.findById(id).select('-password')
+        return await userModel.findById(id).select('-password');
+    },
+
+    findUser: async function(id) {
+        return await userModel.findById(id);
     },
 
     updateUser: async function(user, firstname, lastname, email, password) {
-        if(user.constructor.collection.name !== 'User') {
+        if(user.constructor.modelName !== 'User') {
             return;
         }
-        user.firstname = firstname || user.firstname;
-        user.lastname = lastname || user.lastname;
-        user.email = email || user.email;
-        user.password = password || user.password;
+        user.firstname = firstname;
+        user.lastname = lastname;
+        user.email = email;
+        user.password = password;
         return await user.save();
     },
 
     updateActivity: async function(user){
-        if(user.constructor.collection.name !== 'User') {
+        if(user.constructor.modelName !== 'User') {
             return;
         }
         user.isActive = !user.isActive; 

@@ -17,7 +17,7 @@ module.exports = {
     },
 
     updateVisitor: async function(visitor) {
-        if(user.constructor.collection.name !== 'Visitor') {
+        if(visitor.constructor.modelName !== 'Visitor') {
             return;
         }
 

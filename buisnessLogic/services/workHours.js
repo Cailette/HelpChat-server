@@ -16,7 +16,7 @@ module.exports = {
     },
 
     updateDayTo: async function(workHours) {
-        if(user.constructor.collection.name !== 'WorkHours') {
+        if(workHours.constructor.modelName !== 'WorkHours') {
             return;
         }
         workHours.dayTo = Date.now();

@@ -17,7 +17,7 @@ module.exports = {
             req.body.lastname, 
             req.body.email, 
             req.body.password, 
-            req.body.representative ? req.body.id : null 
+            req.body.id ? req.body.id : null 
         );
 
         if(!newUser){
@@ -28,27 +28,35 @@ module.exports = {
         
         return res.status(201).json({
             message: "User added successfully!", 
-            user: userInfo
+            user: newUser
         });
     },
 
     login: async function(req, res) {
-        const user = await authenticate.authenticate(await userService.findByEmail(req.body.email), req.body.password, req.app.get('secretKey'));
+        const user = await userService.findByEmail(req.body.email);
         
         if(!user){
             return res.status(404).json({
-                message: "Invalid mail or password!"
+                message: "Invalid mail!"
             });
         } 
         
-        const token = await authenticate.generateToken(user._id, user.representative? user.representative: user._id, req.app.get('secretKey'));
+        const auth = await authenticate.authenticate(req.body.password, user.password);
+
+        if(!auth){
+            return res.status(400).json({
+                message: "Invalid password!"
+            });
+        } 
+        
+        const token = await authenticate.generateToken(user._id, user.representative, req);
 
         if(!token){
             return res.status(400).json({
-                message: "Token error."
+                message: "Token error!"
             });
         } 
-
+        
         return res.status(200).json({
             message: "User login successfully!", 
             token: token
@@ -66,29 +74,29 @@ module.exports = {
 
         return res.status(200).json({
             message: "User found successfully!", 
-            user: userInfo
+            user: user
         });
     },
 
     updateById: async function(req, res) {
-        const user = await userService.findById(req.params.AgentId ? req.params.AgentId : req.body.userId)
+        const user = await userService.findUser(req.params.AgentId ? req.params.AgentId : req.body.id)
 
         if(!user) {
             return res.status(404).json({
                 message: "User can not be found!"
             });
         }
-
+        
         const userUpdated = await userService.updateUser(
             user,
-            req.body.firstname || user.firstname,
-            req.body.lastname || user.lastname,
-            req.body.email || user.email,
-            req.body.password || user.password
+            req.body.firstname ? req.body.firstname : user.firstname,
+            req.body.lastname ? req.body.lastname : user.lastname,
+            req.body.email ? req.body.email : user.email,
+            req.body.password ? req.body.password : user.password
         );
 
         if(!userUpdated) {
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "User can not be updated!"
             });
         }
@@ -100,7 +108,7 @@ module.exports = {
     },
 
     updateActivity: async function(req, res){
-        const user = await userService.findById(req.body.userId)
+        const user = await userService.findById(req.body.id)
 
         if(!user) {
             return res.status(404).json({
@@ -131,10 +139,10 @@ module.exports = {
     // POTRZEBA USUWANIA PRZEDSTAWICIELA RÓWNIEŻ!!!
     delete: async function(req, res){
         // if(!req.params.AgentId){
-        //     const rest = await userService.deleteMany({ representative: req.body.userId });
+        //     const rest = await userService.deleteMany({ representative: req.body.id });
         // }
 
-        const userDeleted = await userService.delete(req.params.AgentId ? req.params.AgentId : req.body.userId)
+        const userDeleted = await userService.delete(req.params.AgentId ? req.params.AgentId : req.body.id)
 
         if(!userDeleted) {
             return res.status(401).json({
@@ -148,7 +156,7 @@ module.exports = {
     },
 
     getAll: async function(req, res) {
-        const users = await userService.findAllByRepresentative(req.body.userId)
+        const users = await userService.findAllByRepresentative(req.body.id)
 
         if(!users) {
             return res.status(404).json({

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
     authorizate: function(req, res, next) {
-        jwt.verify(req.headers['x-access-token'], secretKey, function(err, decoded) {
+        jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decoded) {
             if (err) {
                 res.json({
                     status:"error", 
