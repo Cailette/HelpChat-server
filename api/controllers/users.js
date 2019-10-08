@@ -170,7 +170,7 @@ module.exports = {
         }); 
     },
 
-    getActiveUsers: async function(req, res) {
+    getWorkingUsers: async function(req, res) {
         const users = await userService.findActiveUsersByRepresentative(req.body.representative);
         
         if(!users || users.length === 0) {
@@ -185,7 +185,7 @@ module.exports = {
         });
     },
 
-    getRandomWorkingAgent: async function(req, res) {
+    getRandomWorkingUser: async function(req, res) {
         const user = await userService.findRandomWorkingUserByRepresentative(req.body.representative)
         
         if(users.length == 0) {

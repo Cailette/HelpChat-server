@@ -19,6 +19,7 @@ router.put('/:AgentId', authorizate.authorizate, userController.updateById);
 // router.delete('/user', authorizate.authorizate, userController.delete);
 router.delete('/:AgentId', authorizate.authorizate, userController.delete);
 
-router.get('/working-agent', authorizate.authorizate, userController.getRandomWorkingAgent);
+router.get('/working-now', authorizate.authorizate, userController.getWorkingUsers);
+router.get('/working-random', authorizate.authorizate, userController.getRandomWorkingUser);
 
 module.exports = router;

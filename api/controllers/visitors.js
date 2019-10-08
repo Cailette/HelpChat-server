@@ -5,9 +5,13 @@ const authenticate = require('../../BuisnessLogic/auth/authenticate');
 module.exports = {
     create: async function(req, res) {
         const visitor = await visitorService.create({
-                lat: req.body.geoLocation.lat, 
-                lng: req.body.geoLocation.lng
-            }, req.body.ipAddress, req.body.browserSoftware, req.body.operatingSoftware, req.body.representative
+                lat: req.body.geoLocation.lat || "Brak danych", 
+                lng: req.body.geoLocation.lng || "Brak danych"
+            }, 
+            req.body.ipAddress || "Brak danych", 
+            req.body.browserSoftware || "Brak danych", 
+            req.body.operatingSoftware || "Brak danych", 
+            req.body.representative
         )
 
         if(!visitor){

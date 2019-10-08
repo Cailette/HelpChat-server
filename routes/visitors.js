@@ -11,6 +11,6 @@ router.get('/', authorizate.authorizate, visitorsController.getAll);
 router.get('/:VisitorId', authorizate.authorizate, visitorsController.getById);
 router.get('/visitor', authorizate.authorizate, visitorsController.getById);
 
-router.get('/found-agent', authorizate.authorizate, userController.getRandomWorkingAgent);
+router.get('/found-agent', authorizate.authorizate, userController.getRandomWorkingUser);
 
 module.exports = router;

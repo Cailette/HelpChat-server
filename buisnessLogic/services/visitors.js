@@ -21,7 +21,7 @@ module.exports = {
             return;
         }
 
-        if(visitor.isActive){
+        if(visitor.isActive) {
             const now = new Date(Date.now());
             visitor.lastVisit = now;
             visitor.isActive = false;
