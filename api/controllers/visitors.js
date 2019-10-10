@@ -19,7 +19,7 @@ module.exports = {
                 message: "Visitor can not be added!"
             });
         }
-
+        
         const token = await authenticate.generateToken(visitor._id, visitor.representative, req.app.get('secretKey'));
 
         if(!token){

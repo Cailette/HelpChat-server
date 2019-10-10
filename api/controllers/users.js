@@ -1,6 +1,5 @@
-const userService = require('../../buisnessLogic/services/users');
-const activityService = require('../../buisnessLogic/services/activity');
-const authenticate = require('../../BuisnessLogic/auth/authenticate');
+const userService = require('../../buisnessLogic/services/users')
+const activityService = require('../../buisnessLogic/services/activity')
 
 module.exports = {
     create: async function(req, res) {
@@ -49,7 +48,7 @@ module.exports = {
             });
         } 
         
-        const token = await authenticate.generateToken(user._id, user.representative, req);
+        const token = await authenticate.generateToken(user._id, user.representative, req.app.get('secretKey'));
 
         if(!token){
             return res.status(400).json({
@@ -168,11 +167,11 @@ module.exports = {
             message: "Users found successfully!", 
             users: users
         }); 
-    },
+    }, 
 
     getWorkingUsers: async function(req, res) {
         const users = await userService.findActiveUsersByRepresentative(req.body.representative);
-        
+
         if(!users || users.length === 0) {
             return res.status(404).json({
                 message: "Users can not be found!"
@@ -188,7 +187,7 @@ module.exports = {
     getRandomWorkingUser: async function(req, res) {
         const user = await userService.findRandomWorkingUserByRepresentative(req.body.representative)
         
-        if(users.length == 0) {
+        if(!user) {
             return res.status(404).json({
                 message: "Users can not be found!"
             });

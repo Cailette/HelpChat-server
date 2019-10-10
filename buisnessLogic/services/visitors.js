@@ -3,7 +3,7 @@ var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
-    create: async function(geoLocation, ipAddress, browserSoftware, representative) {
+    create: async function(geoLocation, ipAddress, browserSoftware, operatingSoftware, representative) {
         return await visitorModel.create({ 
             geoLocation: {
                 lat: geoLocation.lat, 

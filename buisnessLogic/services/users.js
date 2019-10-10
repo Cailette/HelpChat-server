@@ -55,27 +55,40 @@ module.exports = {
     findActiveUsersByRepresentative: async function(representative) {
         return await userModel.find( 
             { $and : [
-                { $or : [ { representative: representative }, { _id: representative } ] },
+                { $or : [{ _id: representative }, 
+                    { representative: representative }] },
                 { isActive : true }
             ]
             } ).select('-password');
     },
 
     findWorkingUsersByRepresentative: async function(representative) {
-        const users = await this.getActiveUsersByRepresentative(representative)
+        const users = await this.findActiveUsersByRepresentative(representative)
+
+        if(!users){
+            return;
+        }
+
         const now = new Date(Date.now());
         const workingUsers = [];
+
         for(var user of users){
-            const workHours = await workHoursModel.findOne({ agent: mongoose.Types.ObjectId(user._id), dayOfWeek: now.getDay(), dayTo: null });
+            const workHours = await workHoursModel.findOne({ agent: user._id, dayOfWeek: now.getDay(), dayTo: null });
             if((workHours && now.getHours() >= workHours.hourFrom && now.getHours() < workHours.hourTo) || !workHours) {
                 workingUsers.push(user);
             }
         }
+
         return workingUsers;
     },
 
     findRandomWorkingUserByRepresentative: async function(representative) {
         const users = await this.findWorkingUsersByRepresentative(representative);
+
+        if(!users){
+            return;
+        }
+
         return users[Math.floor(Math.random() * users.length)];
     },
 }
