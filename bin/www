@@ -23,7 +23,8 @@ var server = http.createServer(app);
 
 
 var io = require('socket.io').listen(server); 
-require('../routes/socket')(io);
+io.use(require("../buisnessLogic/auth/authorizate").authorizateSocket);
+require('../socket/socket')(io);
 
 /**
  * Listen on provided port, on all network interfaces.

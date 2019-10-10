@@ -16,4 +16,14 @@ module.exports = {
             }
         });
     },
+
+    authorizateSocket: function(socket, next) {
+        const token = socket.handshake.query.token;
+        jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
+          if(err) return next(err);
+          socket.id = decoded.id;
+          socket.representative = decoded.representative;
+          next();
+        });
+    },
 }
