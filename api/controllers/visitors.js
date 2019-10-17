@@ -75,7 +75,7 @@ module.exports = {
     },
 
     getAll: async function(req, res) {
-        const visitorsInfo = await visitorService.findAllByRepresentative(req.body.isRepresentative? req.body.id: req.body.representative)
+        const visitorsInfo = await visitorService.findAllByRepresentative(req.body.representative == null? req.body.id: req.body.representative)
 
         if(!visitorsInfo) {
             return res.status(404).json({

@@ -1,22 +1,16 @@
 module.exports = (io) => {
     io.on('connection', (socket) => {
-        console.log("CONNECTION: " + socket);
+        socket.join(socket.id);
+        console.log("CONNECTION: " + socket.id);
 
         socket
-            .on('locationChange', locationChange)
-            .on('joinRoom', joinRoom)
+            .on('switchRoom', switchRoom)
             .on('disconnect', disconnect);
 
-        function locationChange(location, callback) {
-            console.log("LOCATION: " + location)
-            io.in(socket.room).emit('locationChange', location);
-        }
-
-        function joinRoom(room, callback) {
-            socket.location = room;
+        function switchRoom(room) {
+            socket.room = room;
             socket.join(room);
-            console.log("socket.room: " + socket.location)
-            io.in(socket.location).emit('locationChange', "New visitor");
+            console.log("socket.room: " + socket.room)
         }
 
         function disconnect() {

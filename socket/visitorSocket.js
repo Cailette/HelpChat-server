@@ -1,11 +1,19 @@
 const userService = require('../buisnessLogic/services/users');
 const visitorService = require('../buisnessLogic/services/visitors');
-const chatService = require('../buisnessLogic/services/chat');
+const chatService = require('../buisnessLogic/services/chats');
+const jwt = require('jsonwebtoken');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
-        socket.join(socket.id);
-        console.log("CONNECTION: " + socket.id);
+        const token = socket.handshake.query.token;
+        jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
+          socket.room = decoded.id;
+          socket.representative = decoded.representative;
+        });
+
+        console.log("CONNECTION: " + socket.room);
+        console.log("REP: " + socket.representative);
+        socket.join(socket.room);
 
         socket
         .on('connectWithAgent', connectWithAgent)
@@ -13,31 +21,30 @@ module.exports = (io) => {
         .on('disconnect', disconnect);
 
         function locationChange(location) {
-            console.log("LOCATION: " + location)
             io.in(socket.room).emit('locationChange', location);
         }
 
         async function connectWithAgent() {
-            let agent = userService.findRandomWorkingUserByRepresentative(socket.representative);
+            let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);
             if(!agent){
                 io.in(socket.room).emit('connectionWithAgent', null);
             }
+            socket.agent = agent._id;
+            console.log("agent: " + agent);
 
-            let newChat = chatService.create(socket.id, agent._id)
+            let newChat = await chatService.create(socket.room, agent._id)
             if(!newChat){
                 io.in(socket.room).emit('error', "Can not create chat.");
             }
 
             socket.chat = newChat._id;
-            io.in(socket.room).emit('connectionWithAgent', null);
-
-            // socket.location = room;
-            // socket.join(room);
-            // console.log("socket.room: " + socket.location)
-            // io.in(socket.location).emit('locationChange', "New visitor");
+            console.log("newChat: " + newChat);
+            io.in(socket.room).emit('connectionWithAgent', agent);
+            // + powiadom agenta
         }
 
         function disconnect() {
+            // + powiadom agenta
             let updatedChat = chatService.updateActivity(socket.chat)
         }
     });

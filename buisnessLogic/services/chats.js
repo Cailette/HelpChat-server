@@ -8,8 +8,20 @@ module.exports = {
         });
     },
 
-    findById: async function(id) {
-        return await chatModel.findById(id)
+    findActiveByUserId: async function(id) {
+        return await chatModel.find({ agent: id, isActive: true })
+    },
+
+    update: async function(chat){
+        // if(chat.constructor.modelName !== 'Chat') {
+        //     return;
+        // }
+        // chat.isActive = false; 
+        // return await chat.save();
+    },
+
+    delete: async function(id){
+        return await chatModel.deleteOne({ _id: id })
     },
 
     updateActivity: async function(chat){
@@ -19,8 +31,4 @@ module.exports = {
         chat.isActive = false; 
         return await chat.save();
     },
-
-    delete: async function(id){
-        return await chatModel.deleteOne({ _id: id })
-    },
-}
+} 

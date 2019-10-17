@@ -8,11 +8,17 @@ const mongoose = require('./Database/database');
 
 var app = express();
 
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger.json');
+ 
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // routers 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var workHoursRouter = require('./routes/workHours');
 var visitorsRouter = require('./routes/visitors');
+var chatsRouter = require('./routes/chats');
 
 require('dotenv').config();
 app.set('secretKey', 'HelpChatRestApi'); 
@@ -43,7 +49,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
-  
+app.use('/chats', chatsRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
