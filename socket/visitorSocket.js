@@ -11,9 +11,8 @@ module.exports = (io) => {
           socket.representative = decoded.representative;
         });
 
-        console.log("CONNECTION: " + socket.room);
-        console.log("REP: " + socket.representative);
         socket.join(socket.room);
+        console.log("VISITOR CONNECTION: " + socket.room);
 
         socket
         .on('connectWithAgent', connectWithAgent)
@@ -43,9 +42,14 @@ module.exports = (io) => {
             // + powiadom agenta
         }
 
-        function disconnect() {
+        async function disconnect() {
             // + powiadom agenta
-            let updatedChat = chatService.updateActivity(socket.chat)
+            console.log("Disconnect: " + socket.chat);
+            let chat = await chatService.findById(socket.chat);
+            if(!chat){
+                console.log("Disconnect ERROR in: " + socket.chat);
+            }
+            let updatedChat = chatService.updateActivity(chat)
         }
     });
 }

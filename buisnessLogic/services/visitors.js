@@ -1,4 +1,5 @@
 const visitorModel = require('../../database/models/visitors');
+const chatModel = require('../../database/models/chats');
 var moment = require('moment');
 const jwt = require('jsonwebtoken');
 
@@ -38,5 +39,9 @@ module.exports = {
 
     findAllByRepresentative: async function(representative) {
         return await visitorModel.find({representative: representative, isActive: true})
+    },
+
+    countChats: async function(visitorId) {
+        return await chatModel.count({visitor: visitorId, isActive: false})
     },
 }

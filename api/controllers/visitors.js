@@ -60,7 +60,7 @@ module.exports = {
     },
 
     getById: async function(req, res) {
-        const visitorInfo = await visitorService.findById(req.params.id ? req.params.id : req.body.id)
+        const visitorInfo = await visitorService.findById(req.params.visitorId ? req.params.visitorId : req.body.id)
 
         if(!visitorInfo) {
             return res.status(404).json({
@@ -71,6 +71,22 @@ module.exports = {
         return res.status(200).json({
             message: "Visitor found successfully!", 
             visitor: visitorInfo
+        }); 
+    },
+
+    countChats: async function(req, res) {
+        const countedChats = await visitorService.countChats(req.params.visitorId ? req.params.visitorId : req.body.id)
+
+        if(!countedChats) {
+            return res.status(200).json({
+                message: "Counted successfully!", 
+                countedChats: 0
+            });
+        }
+
+        return res.status(200).json({
+            message: "Counted successfully!", 
+            countedChats: countedChats
         }); 
     },
 

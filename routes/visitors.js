@@ -8,7 +8,8 @@ const authorizate = require('../BuisnessLogic/auth/authorizate');
 router.post('/', visitorsController.create);
 router.put('/', authorizate.authorizate, visitorsController.update);
 router.get('/', authorizate.authorizate, visitorsController.getAll);
-router.get('/:VisitorId', authorizate.authorizate, visitorsController.getById);
+router.get('/:visitorId', authorizate.authorizate, visitorsController.getById);
+router.get('/countChats/:visitorId', authorizate.authorizate, visitorsController.countChats);
 router.get('/visitor', authorizate.authorizate, visitorsController.getById);
 
 router.get('/found-agent', authorizate.authorizate, userController.getRandomWorkingUser);

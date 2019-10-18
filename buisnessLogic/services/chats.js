@@ -12,6 +12,10 @@ module.exports = {
         return await chatModel.find({ agent: id, isActive: true })
     },
 
+    findById: async function(id) {
+        return await chatModel.findById(id)
+    },
+
     update: async function(chat){
         // if(chat.constructor.modelName !== 'Chat') {
         //     return;
