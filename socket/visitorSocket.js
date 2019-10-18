@@ -3,7 +3,7 @@ const visitorService = require('../buisnessLogic/services/visitors');
 const chatService = require('../buisnessLogic/services/chats');
 const jwt = require('jsonwebtoken');
 
-module.exports = (io) => {
+module.exports = (io, agentSocket) => {
     io.on('connection', (socket) => {
         const token = socket.handshake.query.token;
         jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
@@ -20,24 +20,25 @@ module.exports = (io) => {
         .on('disconnect', disconnect);
 
         function locationChange(location) {
-            io.in(socket.room).emit('locationChange', location);
+            console.log("location visitor" + location)
+            agentSocket.in(socket.room).emit('locationChange', location);
         }
 
         async function connectWithAgent() {
             let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);
             if(!agent){
-                io.in(socket.room).emit('connectionWithAgent', null);
+                agentSocket.in(socket.room).emit('connectionWithAgent', null);
             }
             socket.agent = agent._id;
-            console.log("agent: " + agent);
+            console.log("agent: " + agent._id);
 
             let newChat = await chatService.create(socket.room, agent._id)
             if(!newChat){
-                io.in(socket.room).emit('error', "Can not create chat.");
+                agentSocket.in(socket.room).emit('error', "Can not create chat.");
             }
 
             socket.chat = newChat._id;
-            console.log("newChat: " + newChat);
+            console.log("newChat: " + newChat._id);
             io.in(socket.room).emit('connectionWithAgent', agent);
             // + powiadom agenta
         }
