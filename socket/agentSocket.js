@@ -23,11 +23,11 @@ module.exports = (io, visitorSocket) => {
         function switchRoom(room) {
             socket.room = room;
             socket.join(room);
-            console.log("socket.room: " + socket.room)
+            console.log("switchRoom socket.room: " + socket.room)
         }
 
         function getLocation(){
-            console.log("getLocation agent")
+            console.log("getLocation agent " + socket.room)
             visitorSocket.in(socket.room).emit('getLocation');
         }
 

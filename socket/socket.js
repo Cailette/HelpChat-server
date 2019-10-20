@@ -1,7 +1,7 @@
 module.exports = (io) => {
-  var agentSocket = io.of('/agent');
   var visitorSocket = io.of('/visitor');
+  var agentSocket = io.of('/agent');
   
-  require('./agentSocket')(agentSocket, visitorSocket);
   require('./visitorSocket')(visitorSocket, agentSocket);
+  require('./agentSocket')(agentSocket, visitorSocket);
 }

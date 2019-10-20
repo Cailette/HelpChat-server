@@ -20,26 +20,27 @@ module.exports = (io, agentSocket) => {
         .on('disconnect', disconnect);
 
         function locationChange(location) {
-            console.log("location visitor" + location)
+            console.log("location visitor " + socket.room + " " + location + " " + Boolean(agentSocket))
             agentSocket.in(socket.room).emit('locationChange', location);
         }
 
         async function connectWithAgent() {
             let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);
             if(!agent){
-                agentSocket.in(socket.room).emit('connectionWithAgent', null);
+                io.in(socket.room).emit('connectionWithAgent', null);
             }
             socket.agent = agent._id;
             console.log("agent: " + agent._id);
 
             let newChat = await chatService.create(socket.room, agent._id)
             if(!newChat){
-                agentSocket.in(socket.room).emit('error', "Can not create chat.");
+                io.in(socket.room).emit('error', "Can not create chat.");
             }
-
             socket.chat = newChat._id;
             console.log("newChat: " + newChat._id);
+            
             io.in(socket.room).emit('connectionWithAgent', agent);
+            agentSocket.in(agent._id).emit('newChat', newChat._id);
             // + powiadom agenta
         }
 
