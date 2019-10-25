@@ -7,8 +7,8 @@ module.exports = (io, visitorSocket) => {
     io.on('connection', (socket) => {
         const token = socket.handshake.query.token;
         jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
-        socket.id = decoded.id;
-          socket.representative = decoded.representative;
+            socket.id = decoded.id;
+            socket.representative = decoded.representative;
         });
 
         socket.join(socket.id);
@@ -21,6 +21,7 @@ module.exports = (io, visitorSocket) => {
             .on('getLocation', getLocation);
 
         function switchRoom(room) {
+            socket.leave(socket.room);
             socket.room = room;
             socket.join(room);
             console.log("switchRoom socket.room: " + socket.room)

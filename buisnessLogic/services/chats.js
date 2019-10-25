@@ -12,6 +12,14 @@ module.exports = {
         return await chatModel.find({ agent: id, isActive: true })
     },
 
+    findActiveByVisitorId: async function(id) {
+        if(JSON.stringify(await chatModel.find()) === "[]"){
+            return false;
+        } else {
+            return await chatModel.findOne({ visitor: id, isActive: true })
+        }
+    },
+
     findById: async function(id) {
         return await chatModel.findById(id)
     },
