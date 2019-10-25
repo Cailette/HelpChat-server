@@ -39,5 +39,29 @@ module.exports = {
             message: "Chats found successfully!", 
             chats: chats
         });
+    },
+
+    rating: async function(req, res) {
+        const chat = await chatService.findById(req.params.ChatId);
+            
+        if(!chat) {
+            return res.status(404).json({
+                message: "Chat not found!"
+            });
+        }
+
+        const ratedChat = await chatService.updateRating(chat, req.body.rating);
+            
+        if(!ratedChat) {
+            return res.status(400).json({
+                message: "Chat can not be rated!"
+            });
+        }
+
+        return res.status(200).json({
+            status: 200, 
+            message: "Chat updated successfully!", 
+            chat: ratedChat
+        });
     }
 }

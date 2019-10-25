@@ -6,5 +6,6 @@ const authorizate = require('../BuisnessLogic/auth/authorizate');
 
 router.get('/', authorizate.authorizate, chatsController.getActiveByAgentId);
 router.put('/:ChatId', authorizate.authorizate, chatsController.updateById);
+router.put('/rating/:ChatId', authorizate.authorizate, chatsController.rating);
 
 module.exports = router;

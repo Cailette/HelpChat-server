@@ -71,7 +71,7 @@ module.exports = (io, agentSocket) => {
             socket.chat = newChat._id;
             console.log("newChat: " + socket.chat);
             
-            io.emit('connectionWithAgent', agent);
+            io.emit('connectionWithAgent', agent, newChat);
 
             // powiadom agenta
             // agentSocket.in(socket.agent).emit('updateChatList');
@@ -86,7 +86,7 @@ module.exports = (io, agentSocket) => {
             let agent = await userService.findById(chat.agent);
             let messages = await messagesService.findByChatId(chat._id);
 
-            io.emit('nextChat', messages, agent); 
+            io.emit('nextChat', chat, messages, agent); 
         }
     });
 }

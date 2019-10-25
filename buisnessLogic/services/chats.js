@@ -24,12 +24,12 @@ module.exports = {
         return await chatModel.findById(id)
     },
 
-    update: async function(chat){
-        // if(chat.constructor.modelName !== 'Chat') {
-        //     return;
-        // }
-        // chat.isActive = false; 
-        // return await chat.save();
+    updateRating: async function(chat, rating){
+        if(chat.constructor.modelName !== 'Chat') {
+            return;
+        }
+        chat.rating = rating; 
+        return await chat.save();
     },
 
     delete: async function(id){
