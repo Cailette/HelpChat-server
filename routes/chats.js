@@ -8,5 +8,6 @@ router.get('/', authorizate.authorizate, chatsController.getActiveByAgentId);
 router.get('/archive', authorizate.authorizate, chatsController.getInactive);
 router.put('/:ChatId', authorizate.authorizate, chatsController.updateById);
 router.put('/rating/:ChatId', authorizate.authorizate, chatsController.rating);
+router.delete('/:ChatId', authorizate.authorizate, chatsController.delete);
 
 module.exports = router;

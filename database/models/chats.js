@@ -56,4 +56,11 @@ ChatSchema.post('save', async function(){
     }
 });
 
+ChatSchema.pre('remove', function() {
+    const Messages = require('./messages');
+    Messages.remove({_id: { $in: this.messages }}, (err, res) => {
+        console.log(err)
+    })
+});
+
 module.exports = mongoose.model('Chat', ChatSchema);
