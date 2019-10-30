@@ -41,6 +41,28 @@ module.exports = {
         });
     },
 
+    getInactive: async function(req, res) {
+        let chats = null;
+
+        if(req.body.representative == null){
+            chats = await chatService.findInactiveByRepresentative(req.body.id);
+        }else{
+            chats = await chatService.findInactiveByUserId(req.body.id);
+        }
+
+        if(!chats) {
+            return res.status(404).json({
+                message: "Chats not found!"
+            });
+        }
+
+        return res.status(200).json({
+            status: 200, 
+            message: "Chats found successfully!", 
+            chats: chats
+        });
+    },
+
     rating: async function(req, res) {
         const chat = await chatService.findById(req.params.ChatId);
             

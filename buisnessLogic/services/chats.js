@@ -10,6 +10,31 @@ module.exports = {
 
     findActiveByUserId: async function(id) {
         return await chatModel.find({ agent: id, isActive: true })
+        .populate('agent')
+        .populate('visitor')
+        .populate('messages')
+    },
+
+    findInactiveByUserId: async function(id) {
+        return await chatModel.find({ isActive: false })
+            .populate({
+                path: 'agent',
+                match: { _id: id},
+                select: '_id firstname lastname email'
+            })
+            .populate('visitor')
+            .populate('messages')
+    },
+
+    findInactiveByRepresentative: async function(id) {
+        return await chatModel.find({ isActive: false })
+            .populate({
+                path: 'agent',
+                match: { $or: [{_id: id}, {representative: id}] },
+                select: '_id firstname lastname email'
+            })
+            .populate('visitor')
+            .populate('messages')
     },
 
     findActiveByVisitorId: async function(id) {

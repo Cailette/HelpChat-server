@@ -38,11 +38,19 @@ const ChatSchema = new Schema({
 
 ChatSchema.post('save', async function(){
     const Visitor = require('./visitors');
+    const User = require('./user');
 
     const visitor = await Visitor.findById(this.visitor);
     if(visitor.chats.indexOf(visitor._id) === -1){
         visitor.chats.push(this._id);
         visitor.save((err) => {
+            console.log(err)
+        });
+    }
+    const user = await User.findById(this.user);
+    if(user.chats.indexOf(user._id) === -1){
+        user.chats.push(this._id);
+        user.save((err) => {
             console.log(err)
         });
     }

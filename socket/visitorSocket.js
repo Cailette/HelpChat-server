@@ -4,27 +4,31 @@ const chatService = require('../buisnessLogic/services/chats');
 const messagesService = require('../buisnessLogic/services/messages');
 const jwt = require('jsonwebtoken');
 
-module.exports = (io, agentSocket) => {
-    io.on('connection', (socket) => {
-        const token = socket.handshake.query.token;
-        jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
-            socket.id = decoded.id;
-            socket.representative = decoded.representative;
-        });
-
-        socket.join(socket.id);
-        socket.room = socket.id;
-        socket.username = "VISITOR"; 
-        console.log("VISITOR CONNECTION: " + socket.room);
-
+module.exports = (visitorSocket, agentSocket) => {
+    visitorSocket.on('connection', (socket) => {
         socket
+            .on('init', init)
             .on('connectWithAgent', connectWithAgent)
             .on('locationChange', locationChange)
             .on('disconnect', disconnect);
 
+        function init(token){
+            // const token = socket.handshake.query.token;
+            jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
+                socket.id = decoded.id;
+                socket.representative = decoded.representative;
+            });
+    
+            socket.room = socket.id;
+            socket.join(socket.room);
+            socket.username = "VISITOR"; 
+            console.log("VISITOR CONNECTION: " + socket.room);
+        }
+
         function locationChange(location) {
             console.log("location visitor " + socket.room + " " + location + " " + Boolean(agentSocket))
-            // agentSocket.in(socket.room).emit('locationChange', location);
+            agentSocket.in(socket.room).emit('locationChange', location);
+            // io.sockets.in(socket.room).emit('locationChange', location);
         }
 
         async function connectWithAgent() {
@@ -50,7 +54,7 @@ module.exports = (io, agentSocket) => {
                     console.log("Disconnect ERROR in: " + socket.chat);
                 }
                 // powiadom agenta
-                // agentSocket.in(socket.agent).emit('updateChatList');
+                agentSocket.in(socket.agent).emit('updateChatList');
             }
             socket.leave(socket.room);
         }
@@ -59,23 +63,24 @@ module.exports = (io, agentSocket) => {
             socket.nextChat = false;
             let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);
             if(!agent){
-                io.in(socket.room).emit('connectionWithAgent', null);
+                socket.emit('connectionWithAgent', null);
             }
             socket.agent = agent._id;
             console.log("connectionWithAgent: " + socket.agent);
 
             let newChat = await chatService.create(socket.room, agent._id)
             if(!newChat){
-                io.in(socket.room).emit('error', "Can not create chat.");
+                socket.emit('error', "Can not create chat.");
             }
             socket.chat = newChat._id;
             console.log("newChat: " + socket.chat);
             
-            io.emit('connectionWithAgent', agent, newChat);
+            console.log("socket.rooms " + JSON.stringify(socket.rooms));
+            visitorSocket.emit('connectionWithAgent', agent, newChat);
 
             // powiadom agenta
             // agentSocket.in(socket.agent).emit('updateChatList');
-            // agentSocket.in(socket.agent).emit('newChat');
+            // agentSocket.in(socket.room).in(socket.agent).emit('newChat');
         }
 
         async function nextChat(chat){
@@ -86,7 +91,7 @@ module.exports = (io, agentSocket) => {
             let agent = await userService.findById(chat.agent);
             let messages = await messagesService.findByChatId(chat._id);
 
-            io.emit('nextChat', chat, messages, agent); 
+            socket.emit('nextChat', chat, messages, agent); 
         }
     });
 }

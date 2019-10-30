@@ -27,4 +27,15 @@ const ActivitySchema = new Schema({
     }
 });
 
+ActivitySchema.post('save', async function(){
+    const User = require('./user');
+    const user = await User.findById(this.user);
+    if(user.activities.indexOf(user._id) === -1){
+        user.activities.push(this._id);
+        user.save((err) => {
+            console.log(err)
+        });
+    }
+});
+
 module.exports = mongoose.model('Activity', ActivitySchema);

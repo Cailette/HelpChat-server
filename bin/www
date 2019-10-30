@@ -22,8 +22,8 @@ app.set('port', port);
 var server = http.createServer(app);
 
 
-var io = require('socket.io').listen(server); 
-io.use(require("../buisnessLogic/auth/authorizate").authorizateSocket);
+const io = require('socket.io').listen(server); 
+// io.use(require("../buisnessLogic/auth/authorizate").authorizateSocket);
 require('../socket/socket')(io);
 
 /**

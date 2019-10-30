@@ -35,7 +35,19 @@ const UserSchema = new Schema({
         trim: true,
         default: null,
         ref: 'User'
-    }
+    },
+    chats: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Chat'
+    }],
+    activities: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Activity'
+    }],
+    workHours: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'WorkHours'
+    }]
 });
 
 UserSchema.pre('save', async function(next){
