@@ -10,4 +10,7 @@ router.put('/:ChatId', authorizate.authorizate, chatsController.updateById);
 router.put('/rating/:ChatId', authorizate.authorizate, chatsController.rating);
 router.delete('/:ChatId', authorizate.authorizate, chatsController.delete);
 
+
+// router.get('/messages', chatsController.messages);
+
 module.exports = router;

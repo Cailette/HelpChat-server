@@ -1,17 +1,11 @@
 const messagesModel = require('../../database/models/messages');
 
 module.exports = {
-    create: async function(content) {
+    create: async function(chat, content, sender) {
         return await messagesModel.create({ 
-            //
+            chat: chat,
+            content: content,
+            sender: sender
         });
     },
-
-    delete: async function(id){
-        return await messagesModel.deleteOne({ _id: id })
-    },
-
-    findByChatId: async function(id){
-        return await messagesModel.deleteOne({ _id: id })
-    },
-} 
+}

@@ -12,7 +12,12 @@ module.exports = {
         return await chatModel.find({ agent: id, isActive: true })
         .populate('agent')
         .populate('visitor')
-        .populate('messages')
+        .populate({ 
+            path: 'messages', 
+            options: { 
+                sort: { date: 1 } 
+            } 
+        })
     },
 
     findInactiveByUserId: async function(id) {

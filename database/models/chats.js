@@ -32,13 +32,13 @@ const ChatSchema = new Schema({
     },
     messages: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Chat'
+      ref: 'Message'
     }]
 });
 
 ChatSchema.post('save', async function(){
     const Visitor = require('./visitors');
-    const User = require('./user');
+    const User = require('./users');
 
     const visitor = await Visitor.findById(this.visitor);
     if(visitor.chats.indexOf(visitor._id) === -1){
@@ -47,8 +47,8 @@ ChatSchema.post('save', async function(){
             console.log(err)
         });
     }
-    const user = await User.findById(this.user);
-    if(user.chats.indexOf(user._id) === -1){
+    const user = await User.findById(this.agent);
+    if(user.chats !== null && user.chats.indexOf(user._id) === -1){
         user.chats.push(this._id);
         user.save((err) => {
             console.log(err)
