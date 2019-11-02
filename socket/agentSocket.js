@@ -1,6 +1,7 @@
 const userService = require('../buisnessLogic/services/users');
 const visitorService = require('../buisnessLogic/services/visitors');
 const chatService = require('../buisnessLogic/services/chats');
+const messagesService = require('../buisnessLogic/services/messages');
 const jwt = require('jsonwebtoken');
 
 module.exports = (agentSocket, visitorSocket) => {
@@ -9,7 +10,8 @@ module.exports = (agentSocket, visitorSocket) => {
             .on('init', init)
             .on('switchRoom', switchRoom)
             .on('disconnect', disconnect)
-            .on('getLocation', getLocation);
+            .on('getLocation', getLocation)
+            .on('message', message);
 
         
         function init(token){
@@ -18,16 +20,18 @@ module.exports = (agentSocket, visitorSocket) => {
                 socket.id = decoded.id;
                 socket.representative = decoded.representative;
             });
-    
-            socket.room = socket.id;
-            socket.join(socket.room);
+            socket.room = null;
+            socket.join(socket.id);
             console.log("AGENT CONNECTION: " + socket.room);
         }
 
         function switchRoom(room) {
             socket.leave(socket.room);
-            socket.room = room;
-            socket.join(room);
+            socket.room = null;
+            if(room !== socket.id) {
+                socket.room = room;
+                socket.join(room);
+            }
             console.log("switchRoom socket.room: " + socket.room)
         }
 
@@ -37,10 +41,21 @@ module.exports = (agentSocket, visitorSocket) => {
             // io.sockets.in(socket.room).emit('getLocation');
         }
 
+        async function message(content){
+            const message = await messagesService.create(socket.room, content, "agent");
+
+            socket.emit('message', message);
+            // agent
+            // visitorSocket.emit('message', message);
+        }
+
         function disconnect() {
-            // + notify visitors
             console.log('DISCONNECT');
-            socket.leave(socket.room);
+            if(socket.room !== null){
+                socket.leave(socket.room);
+                // + notify visitors
+            }
+            socket.leave(socket.id);
         }
     });
 }

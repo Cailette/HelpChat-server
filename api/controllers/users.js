@@ -136,12 +136,7 @@ module.exports = {
         })
     },
 
-    // POTRZEBA USUWANIA PRZEDSTAWICIELA RÓWNIEŻ!!!
     delete: async function(req, res){
-        // if(!req.params.AgentId){
-        //     const rest = await userService.deleteMany({ representative: req.body.id });
-        // }
-
         const userDeleted = await userService.delete(req.params.AgentId ? req.params.AgentId : req.body.id)
 
         if(!userDeleted) {

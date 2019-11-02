@@ -58,4 +58,25 @@ UserSchema.pre('save', async function(next){
     next();
 });
 
+UserSchema.pre('remove', function() {
+    const Chats = require('./chats');
+    Chats.remove({_id: { $in: this.chats }}, (err, res) => {
+        console.log(err)
+    })
+    const Activities = require('./activities');
+    Activities.remove({_id: { $in: this.activities }}, (err, res) => {
+        console.log(err)
+    })
+    const WorkHours = require('./workHours');
+    WorkHours.remove({_id: { $in: this.workHours }}, (err, res) => {
+        console.log(err)
+    })
+    if(this.representative === null){
+        const Users = require('./user');
+        Users.remove({representative: this._id }, (err, res) => {
+            console.log(err)
+        })
+    }
+});
+
 module.exports = mongoose.model('User', UserSchema);

@@ -47,6 +47,12 @@ module.exports = {
             return false;
         } else {
             return await chatModel.findOne({ visitor: id, isActive: true })
+                .populate({
+                    path: 'agent',
+                    select: '_id firstname lastname email'
+                })
+                .populate('visitor')
+                .populate('messages')
         }
     },
 

@@ -40,7 +40,7 @@ const WorkHoursSchema = new Schema({
 
 WorkHoursSchema.post('save', async function(){
     const User = require('./user');
-    const user = await User.findById(this.user);
+    const user = await User.findById(this.agent);
     if(user.workHours.indexOf(user._id) === -1){
         user.workHours.push(this._id);
         user.save((err) => {

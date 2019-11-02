@@ -48,7 +48,7 @@ ChatSchema.post('save', async function(){
         });
     }
     const user = await User.findById(this.agent);
-    if(user.chats !== null && user.chats.indexOf(user._id) === -1){
+    if(user.chats.indexOf(user._id) === -1){
         user.chats.push(this._id);
         user.save((err) => {
             console.log(err)
