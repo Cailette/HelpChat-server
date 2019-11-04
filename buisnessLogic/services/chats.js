@@ -15,7 +15,7 @@ module.exports = {
         .populate({ 
             path: 'messages', 
             options: { 
-                sort: { date: 1 } 
+                sort: { date: -1 } 
             } 
         })
     },
@@ -28,7 +28,12 @@ module.exports = {
                 select: '_id firstname lastname email'
             })
             .populate('visitor')
-            .populate('messages')
+            .populate({ 
+                path: 'messages', 
+                options: { 
+                    sort: { date: -1 } 
+                } 
+            })
     },
 
     findInactiveByRepresentative: async function(id) {
@@ -39,7 +44,12 @@ module.exports = {
                 select: '_id firstname lastname email'
             })
             .populate('visitor')
-            .populate('messages')
+            .populate({ 
+                path: 'messages', 
+                options: { 
+                    sort: { date: -1 } 
+                } 
+            })
     },
 
     findActiveByVisitorId: async function(id) {
@@ -52,7 +62,12 @@ module.exports = {
                     select: '_id firstname lastname email'
                 })
                 .populate('visitor')
-                .populate('messages')
+                .populate({ 
+                    path: 'messages', 
+                    options: { 
+                        sort: { date: -1 } 
+                    } 
+                })
         }
     },
 
