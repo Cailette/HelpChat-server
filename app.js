@@ -15,6 +15,7 @@ var app = express();
 
 // routers 
 var indexRouter = require('./routes/index');
+var statisticsRouter = require('./routes/statistics');
 var usersRouter = require('./routes/users');
 var workHoursRouter = require('./routes/workHours');
 var visitorsRouter = require('./routes/visitors');
@@ -46,6 +47,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', indexRouter);
+app.use('/statistics', statisticsRouter);
 app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
@@ -55,8 +57,6 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// express doesn't consider not found 404 as an error so we need to handle 404 explicitly
-// handle 404 error
 app.use(function(req, res, next) {
   let err = new Error('Not Found');
   err.status = 404;

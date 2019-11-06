@@ -30,7 +30,7 @@ const ActivitySchema = new Schema({
 ActivitySchema.post('save', async function(){
     const User = require('./users');
     const user = await User.findById(this.agent);
-    if(user.activities.indexOf(user._id) === -1){
+    if(user.activities.indexOf(this._id) === -1){
         user.activities.push(this._id);
         user.save((err) => {
             console.log(err)

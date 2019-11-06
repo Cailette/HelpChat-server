@@ -41,14 +41,14 @@ ChatSchema.post('save', async function(){
     const User = require('./users');
 
     const visitor = await Visitor.findById(this.visitor);
-    if(visitor.chats.indexOf(visitor._id) === -1){
+    if(visitor.chats.indexOf(this._id) === -1){
         visitor.chats.push(this._id);
         visitor.save((err) => {
             console.log(err)
         });
     }
     const user = await User.findById(this.agent);
-    if(user.chats.indexOf(user._id) === -1){
+    if(user.chats.indexOf(this._id) === -1){
         user.chats.push(this._id);
         user.save((err) => {
             console.log(err)

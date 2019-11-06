@@ -64,6 +64,16 @@ module.exports = {
         });
     },
 
+    getAgentByVisitorId: async function(req, res) {
+        let chat = await chatService.findActiveByVisitorId(req.params.VisitorId);
+
+        return res.status(200).json({
+            status: 200, 
+            message: "Chats found successfully!", 
+            agent: chat.agent
+        });
+    },
+
     delete: async function(req, res){
         const chatDeleted = await chatService.delete(req.params.ChatId)
 
