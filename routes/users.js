@@ -20,7 +20,7 @@ router.put('/activity', authorizate.authorizate, userController.updateActivity);
 router.put('/user', authorizate.authorizate, userController.updateById);
 router.put('/:AgentId', authorizate.authorizate, userController.updateById);
 
-// router.delete('/user', authorizate.authorizate, userController.delete);
 router.delete('/:AgentId', authorizate.authorizate, userController.delete);
+// router.delete('/user', authorizate.authorizate, userController.delete);
 
 module.exports = router;

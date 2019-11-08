@@ -70,7 +70,7 @@ module.exports = {
         return res.status(200).json({
             status: 200, 
             message: "Chats found successfully!", 
-            agent: chat.agent
+            agent: chat? chat.agent : null
         });
     },
 
