@@ -86,6 +86,7 @@ module.exports = (io) => {
 
           socket.emit('connectionWithAgent', await chatService.findActiveByVisitorId(socket.clientId));
           socket.to(socket.agent).emit('newChat');
+          socket.to(socket.agent).emit('updateChatList');
           // agent
           // agentSocket.emit('updateChatList');
           // agentSocket.emit('newChat');
@@ -132,9 +133,8 @@ module.exports = (io) => {
               if(!updatedChat){
                   console.log("DISCONNECT ERROR in: " + socket.room);
               }
-
-              // agent
-              // agentSocket.in(socket.agent).emit('updateChatList');
+              socket.to(socket.agent).emit('updateChatList');
+              socket.to(socket.room).emit('visitorDisconnect');
             }
             socket.leave(socket.room);
           }
