@@ -106,9 +106,8 @@ module.exports = (io) => {
           const message = await messagesService.create(socket.room, content, socket.user);
 
           socket.emit('message', message);
-          // agent
-          // agentSocket.in(socket.room).emit('message', message);
-          // agentSocket.in(socket.agent).emit('newMessage', socket.room);
+          socket.to(socket.room).emit('message', message);
+          socket.to(socket.agent).emit('newMessage', socket.room);
       }
 
       function switchRoom(room) {
