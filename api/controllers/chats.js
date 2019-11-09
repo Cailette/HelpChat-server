@@ -26,6 +26,22 @@ module.exports = {
         });
     },
 
+    getById: async function(req, res) {
+        const chat = await chatService.findById(req.params.ChatId)
+
+        if(!chat) {
+            return res.status(404).json({
+                message: "Chat not found!"
+            });
+        }
+
+        return res.status(200).json({
+            status: 200, 
+            message: "Chat updated successfully!", 
+            chat: chat
+        });
+    },
+
     getActiveByAgentId: async function(req, res) {
         const chats = await chatService.findActiveByUserId(req.body.representative == null? req.body.id: req.body.representative);
             

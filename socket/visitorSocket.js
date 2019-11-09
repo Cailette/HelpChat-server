@@ -4,7 +4,7 @@ const chatService = require('../buisnessLogic/services/chats');
 const messagesService = require('../buisnessLogic/services/messages');
 const jwt = require('jsonwebtoken');
 
-module.exports = (visitorSocket, agentSocket) => {
+module.exports = (visitorSocket, agentSocket, io) => {
     visitorSocket.on('connection', (socket) => {
         socket
             .on('init', init)
@@ -19,13 +19,19 @@ module.exports = (visitorSocket, agentSocket) => {
                 socket.id = decoded.id;
                 socket.representative = decoded.representative;
             });
+            socket.room = socket.id;
+            socket.join(socket.room);
             console.log("VISITOR CONNECTION: " + socket.room);
         }
 
         function locationChange(location) {
             console.log("location visitor " + socket.room + " " + location + " " + Boolean(agentSocket))
             // agent
-            // agentSocket.emit('locationChange', location);
+            io.of('/agent').in(socket.room).emit('locationChange', location);
+            
+            console.log(visitorSocket.sockets.adapter);
+            console.log(agentSocket.sockets.adapter);
+            console.log(io.sockets.adapter);
         }
 
         async function connectWithAgent() {
@@ -37,7 +43,7 @@ module.exports = (visitorSocket, agentSocket) => {
                 nextChat(checkIfExistChat);
             }
         }
-
+ 
         async function firstChat(){
             socket.nextChat = false;
             let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);

@@ -73,6 +73,17 @@ module.exports = {
 
     findById: async function(id) {
         return await chatModel.findById(id)
+            .populate({
+                path: 'agent',
+                select: '_id firstname lastname email'
+            })
+            .populate('visitor')
+            .populate({ 
+                path: 'messages', 
+                options: { 
+                    sort: { date: -1 } 
+                } 
+            })
     },
 
     updateRating: async function(chat, rating){

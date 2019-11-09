@@ -6,6 +6,7 @@ const authorizate = require('../BuisnessLogic/auth/authorizate');
 
 router.get('/', authorizate.authorizate, chatsController.getActiveByAgentId);
 router.get('/archive', authorizate.authorizate, chatsController.getInactive);
+router.get('/:ChatId', authorizate.authorizate, chatsController.getById);
 router.put('/:ChatId', authorizate.authorizate, chatsController.updateById);
 router.put('/rating/:ChatId', authorizate.authorizate, chatsController.rating);
 router.delete('/:ChatId', authorizate.authorizate, chatsController.delete);

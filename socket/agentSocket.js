@@ -4,7 +4,7 @@ const chatService = require('../buisnessLogic/services/chats');
 const messagesService = require('../buisnessLogic/services/messages');
 const jwt = require('jsonwebtoken');
 
-module.exports = (agentSocket, visitorSocket) => {
+module.exports = (agentSocket, visitorSocket, io) => {
     agentSocket.on('connection', (socket) => {
         socket
             .on('init', init)
@@ -22,7 +22,7 @@ module.exports = (agentSocket, visitorSocket) => {
             });
             socket.room = null;
             socket.join(socket.id);
-            console.log("AGENT CONNECTION: " + socket.room);
+            console.log("AGENT CONNECTION: " + socket.id);
         }
 
         function switchRoom(room) {
@@ -37,7 +37,8 @@ module.exports = (agentSocket, visitorSocket) => {
 
         function getLocation(){
             console.log("getLocation agent " + socket.room)
-            visitorSocket.in(socket.room).emit('getLocation');
+            console.log(agentSocket.sockets.adapter);
+            io.of('/visitor').in(socket.room).emit('getLocation');
             // io.sockets.in(socket.room).emit('getLocation');
         }
 
