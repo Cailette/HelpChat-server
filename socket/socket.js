@@ -84,9 +84,10 @@ module.exports = (io) => {
           socket.join(socket.room);
           console.log("newChat: " + socket.room);
 
+          let thisChat = await chatService.findActiveByVisitorId(socket.clientId);
           socket.emit('connectionWithAgent', await chatService.findActiveByVisitorId(socket.clientId));
           socket.to(socket.agent).emit('newChat');
-          socket.to(socket.agent).emit('updateChatList');
+          socket.to(socket.agent).emit('updateChatList', thisChat);
           // agent
           // agentSocket.emit('updateChatList');
           // agentSocket.emit('newChat');
@@ -103,12 +104,19 @@ module.exports = (io) => {
       }
 
       async function message(content){
-          console.log("new message: " + content);
-          const message = await messagesService.create(socket.room, content, socket.user);
+        console.log("new message: " + content);
+        console.log("socket.room: " + socket.room);
+        console.log("socket.user: " + socket.user);
+        const message = await messagesService.create(socket.room, content, socket.user);
 
-          socket.emit('message', message);
-          socket.to(socket.room).emit('message', message);
-          socket.to(socket.agent).emit('newMessage', socket.room);
+        socket.emit('message', socket.room, message);
+        if(socket.user === 'agent'){
+            socket.broadcast.to(socket.room).emit('message', socket.room, message);
+        }
+        if(socket.user === 'visitor'){
+            socket.broadcast.to(socket.agent).emit('message', socket.room, message);
+        }
+    //   socket.to(socket.agent).emit('newMessage', socket.room);
       }
 
       function switchRoom(room) {
@@ -133,10 +141,10 @@ module.exports = (io) => {
               if(!updatedChat){
                   console.log("DISCONNECT ERROR in: " + socket.room);
               }
-              socket.to(socket.agent).emit('updateChatList');
-              socket.to(socket.room).emit('visitorDisconnect');
+              socket.to(socket.agent).emit('visitorDisconnect', socket.room);
             }
             socket.leave(socket.room);
+            socket.room = null;
           }
 
           if(socket.user === "agent"){
