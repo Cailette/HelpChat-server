@@ -98,7 +98,7 @@ module.exports = {
         return await chatModel.deleteOne({ _id: id })
     },
 
-    updateActivity: async function(chat){
+    updateActivityFalse: async function(chat){
         if(chat.constructor.modelName !== 'Chat') {
             return;
         }

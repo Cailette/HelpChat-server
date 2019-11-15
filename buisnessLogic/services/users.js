@@ -53,13 +53,12 @@ module.exports = {
     },
 
     findActiveUsersByRepresentative: async function(representative) {
-        return await userModel.find( 
-            { $and : [
-                { $or : [{ _id: representative }, 
-                    { representative: representative }] },
-                { isActive : true }
+        return await userModel.find({
+            $and : [
+                { $or : [{ _id: representative }, { representative: representative }] },
+                { isActive : true } 
             ]
-            } ).select('-password');
+        }).select('-password');
     },
 
     findWorkingUsersByRepresentative: async function(representative) {
