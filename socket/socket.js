@@ -158,3 +158,21 @@ module.exports = (io) => {
       }
   });
 }
+
+
+// io.on('connection', (socket) => {
+//     socket
+//         .on('message', message);
+
+//       async function message(content){
+//         const message = await messagesService.create(socket.room, content, socket.user);
+
+//         socket.emit('message', socket.room, message);
+//         if(socket.user === 'agent'){
+//             socket.broadcast.to(socket.room).emit('message', socket.room, message);
+//         }
+//         if(socket.user === 'visitor'){
+//             socket.broadcast.to(socket.agent).emit('message', socket.room, message);
+//         }
+//       }
+// });
