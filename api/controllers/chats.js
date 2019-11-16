@@ -59,13 +59,7 @@ module.exports = {
     },
 
     getInactive: async function(req, res) {
-        let chats = null;
-
-        if(req.body.representative == null){
-            chats = await chatService.findInactiveByRepresentative(req.body.id);
-        }else{
-            chats = await chatService.findInactiveByUserId(req.body.id);
-        }
+        let chats = await chatService.findInactiveByRepresentative(req.body.representative ? req.body.representative : req.body.id);
 
         if(!chats) {
             return res.status(404).json({
