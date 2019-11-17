@@ -6,7 +6,7 @@ const userController = require('../api/controllers/users');
 const authorizate = require('../BuisnessLogic/auth/authorizate');
 
 router.post('/', visitorsController.create);
-router.put('/', authorizate.authorizate, visitorsController.update);
+router.put('/:status', authorizate.authorizate, visitorsController.update);
 router.get('/', authorizate.authorizate, visitorsController.getAll);
 router.get('/:visitorId', authorizate.authorizate, visitorsController.getById);
 router.get('/countChats/:visitorId', authorizate.authorizate, visitorsController.countChats);

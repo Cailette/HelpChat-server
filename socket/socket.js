@@ -59,23 +59,19 @@ module.exports = (io) => {
             // io.sockets.in(socket.room).emit('getLocation');
         }
 
-        async function connectWithAgent() {
+        async function connectWithAgent(agentId) {
             let checkIfExistChat = await chatService.findActiveByVisitorId(socket.clientId);
             console.log(!!checkIfExistChat)
-            if(!checkIfExistChat) {
-                firstChat();
+            if(agentId !== null) {
+                firstChat(agentId);
             } else {
                 nextChat(checkIfExistChat);
             }
         }
 
-        async function firstChat(){
+        async function firstChat(agentId){
             socket.nextChat = false;
-            let agent = await userService.findRandomWorkingUserByRepresentative(socket.representative);
-            if(!agent){
-                socket.emit('connectionWithAgent', null);
-            }
-            socket.agent = agent._id;
+            socket.agent = agentId;
 
             let newChat = await chatService.create(socket.clientId, socket.agent)
             if(!newChat){
@@ -89,9 +85,6 @@ module.exports = (io) => {
             socket.emit('connectionWithAgent', await chatService.findActiveByVisitorId(socket.clientId));
             socket.to(socket.agent).emit('newChat');
             socket.to(socket.agent).emit('updateChatList', thisChat);
-            // agent
-            // agentSocket.emit('updateChatList');
-            // agentSocket.emit('newChat');
         }
 
         async function nextChat(chat){

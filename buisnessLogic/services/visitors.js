@@ -17,19 +17,17 @@ module.exports = {
         })
     },
 
-    updateVisitor: async function(visitor) {
+    updateVisitor: async function(visitor, status) {
         if(visitor.constructor.modelName !== 'Visitor') {
             return;
         }
 
-        if(visitor.isActive) {
+        if(!status) {
             const now = new Date(Date.now());
             visitor.lastVisit = now;
-            visitor.isActive = false;
-        } else {
-            visitor.isActive = true;
         }
-
+        
+        visitor.isActive = status;
         return await visitor.save();
     },
 
