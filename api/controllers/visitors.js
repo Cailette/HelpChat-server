@@ -36,9 +36,7 @@ module.exports = {
     },
     
     update: async function(req, res) {
-        console.log("req.params.status " + req.params.status)
         const visitor = await visitorService.findById(req.body.id)
-        console.log("visitor " + JSON.stringify(visitor))
 
         if(!visitor){
             return res.status(404).json({
@@ -48,9 +46,7 @@ module.exports = {
         } 
 
         let status = req.params.status === 'true' ? true : false;
-        console.log("status " + status)
         const visitorUpdated = await visitorService.updateVisitor(visitor, status);
-        console.log("visitorUpdated " + JSON.stringify(visitorUpdated))
 
         if(!visitorUpdated) {
             return res.status(404).json({

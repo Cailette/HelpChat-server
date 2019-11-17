@@ -182,8 +182,6 @@ module.exports = {
 
     getRandomWorkingUser: async function(req, res) {
         const user = await userService.findRandomWorkingUserByRepresentative(req.body.representative)
-        console.log("getRandomWorkingUser")
-        console.log(JSON.stringify(user))
         if(!user) {
             return res.status(404).json({
                 message: "Users can not be found!"
@@ -193,6 +191,6 @@ module.exports = {
         return res.status(200).json({
             message: "User found successfully!", 
             user: user
-        }); 
+    }); 
     },
 }
