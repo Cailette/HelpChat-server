@@ -5,8 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 const mongoose = require('./Database/database');
+const cors = require("cors");
 
 var app = express();
+app.use(cors());
 
 // const swaggerUi = require('swagger-ui-express');
 // const swaggerDocument = require('./swagger.json');
@@ -20,23 +22,24 @@ var usersRouter = require('./routes/users');
 var workHoursRouter = require('./routes/workHours');
 var visitorsRouter = require('./routes/visitors');
 var chatsRouter = require('./routes/chats');
+var mailRouter = require('./routes/mail');
 
 require('dotenv').config();
 app.set('secretKey', 'HelpChatRestApi'); 
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.use((req, res, next) => {
-  var allowedOrigins = ['http://localhost:4200', 'http://localhost:4000', 'http://localhost:5000'];
-  var origin = req.headers.origin;
-  if(allowedOrigins.indexOf(origin) > -1){
-       res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-  res.append("Access-Control-Allow-Headers", "Origin, Accept, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, x-access-token");
-  res.append('Access-Control-Allow-Credentials', true);
-  next();
-});
+// app.use((req, res, next) => {
+//   var allowedOrigins = ['http://localhost:4200', 'http://localhost:4000', 'http://localhost:5000'];
+//   var origin = req.headers.origin;
+//   if(allowedOrigins.indexOf(origin) > -1){
+//        res.setHeader('Access-Control-Allow-Origin', origin);
+//   }
+//   res.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+//   res.append("Access-Control-Allow-Headers", "Origin, Accept, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, x-access-token");
+//   res.append('Access-Control-Allow-Credentials', true);
+//   next();
+// });
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -52,6 +55,7 @@ app.use('/users', usersRouter);
 app.use('/work-hours', workHoursRouter);
 app.use('/visitors', visitorsRouter);
 app.use('/chats', chatsRouter);
+app.use('/mail', mailRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

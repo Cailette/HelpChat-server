@@ -6,7 +6,6 @@ module.exports = {
         const statistics = await StatisticsService.getChatsStatistics(req.params.selected, req.params.filterChatAgent, req.params.filterChatDate)
         
         return res.status(200).json({
-            status: 200, 
             message: "Statistics made successfully!", 
             statistics: statistics
         });
@@ -17,7 +16,6 @@ module.exports = {
         const statistics = await StatisticsService.getAgentsStatistics(req.body.id ,req.params.selected, req.params.filterChatAgent, req.params.filterChatDate)
         
         return res.status(200).json({
-            status: 200, 
             message: "Statistics made successfully!", 
             statistics: statistics
         });

@@ -112,4 +112,14 @@ module.exports = {
 
         return users[Math.floor(Math.random() * users.length)];
     },
+
+    findRandomUserByRepresentative: async function(representative) {
+        const users = await this.findAllByRepresentative(representative)
+        console.log(users)
+        if(!users){
+            return;
+        }
+
+        return users[Math.floor(Math.random() * users.length)];
+    },
 }
