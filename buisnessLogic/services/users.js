@@ -20,6 +20,28 @@ module.exports = {
         return await userModel.findById(id).select('-password');
     },
 
+    findActivityById: async function(id, match) {
+        var matchPopulate = match ? { $or: [ {'from': match}, {'to': match} ] } : {};
+        return await userModel.findById(id)
+            .populate({
+                path: 'activities',
+                match: matchPopulate,
+                sort: { 'from': 1 }
+            })
+            .select('_id firstname lastname email')
+    },
+
+    findWorkHoursById: async function(id, match) {
+        var matchPopulate = match ? { $or: [ {'dayFrom': match}, {'dayTo': match} ] } : {};
+        return await userModel.findById(id)
+            .populate({
+                path: 'workHours',
+                match: matchPopulate,
+                sort: { 'dayFrom': 1 }
+            })
+            .select('_id firstname lastname email')
+    },
+
     findUser: async function(id) {
         return await userModel.findById(id);
     },

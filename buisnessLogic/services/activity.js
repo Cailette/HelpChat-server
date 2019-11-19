@@ -36,4 +36,18 @@ module.exports = {
 
         return activity;
     },
+
+    findByUserId: async function(userId, match) {
+        return await activityModel.find({
+            $and: [
+                    match,
+                    { agent: userId }
+                ]
+            })
+            .populate({
+                path: 'agent',
+                select: '_id firstname lastname email'
+            })
+            .sort({from: 1})
+    },
 }

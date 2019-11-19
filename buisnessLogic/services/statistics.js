@@ -1,26 +1,34 @@
-const activityModel = require('../../database/models/activities');
-const userModel = require('../../database/models/users');
-const workHoursModel = require('../../database/models/workHours');
-const visitorModel = require('../../database/models/visitors');
 const chatModel = require('../../database/models/chats');
+const userService = require('../services/users');
+const activityService = require('../services/activity');
+const workHoursService = require('../services/workHours');
 var moment = require('moment');
 var mongoose = require('mongoose');
 
 module.exports = {
-    get: async function(selected, filterChatAgent, filterChatDate) {
-        let {match, dateFormat} = this.getMatch(filterChatAgent, filterChatDate);
+    getChatsStatistics: async function(selected, filterChatAgent, filterChatDate) {
+        let {match, dateFormat} = this.getChatMatch(filterChatAgent, filterChatDate);
         let timeInterval = this.getTimeInterval(filterChatDate);
         let statistics = await this.getStatistics(selected, match, dateFormat);
         let result = [];
-        for (let time of timeInterval) {
-            var data = statistics.find(d => d._id === time);
-            result.push({
-                time: time,
-                data: data ? data.data : null,
-            });
+        if(statistics){
+            for (let time of timeInterval) {
+                var data = statistics.find(d => d._id === time);
+                result.push({
+                    time: time,
+                    data: data ? data.data : null,
+                });
+            }
         }
         console.log(result)
         return result;
+    },
+
+    getAgentsStatistics: async function(representative, selected, filterChatAgent, filterChatDate) {
+        let match = await this.getAgentMatch(filterChatAgent, filterChatDate, representative);
+        let statistics = await this.getStatistics(selected, match);
+        console.log(statistics)
+        return statistics;
     },
 
     getStatistics: async function(selected, match, dateFormat){
@@ -29,14 +37,10 @@ module.exports = {
                 return this.allChats(match, dateFormat);
             case 'satisfaction':
                 return this.satisfaction(match, dateFormat);
-            case 'availability':
-                return this.availability(match, dateFormat);
-            case 'chatTime':
-                return this.chatTime(match, dateFormat);
-            case 'ativity':
-                return this.ativity(match, dateFormat);
+            case 'activity':
+                return this.activity(match);
             case 'workHours':
-                return this.workHours(match, dateFormat);
+                return this.workHours(match);
             default:
                 return null;
           }
@@ -76,7 +80,7 @@ module.exports = {
         }
     },
 
-    getMatch: function(filterChatAgent, filterChatDate){
+    getChatMatch: function(filterChatAgent, filterChatDate){
         let match = {};
         let dateFormat = "%d-%m-%Y" 
 
@@ -102,7 +106,7 @@ module.exports = {
             var date = new Date(filterChatDate);
             match.date = { 
                 $gte: date,
-            } 
+            }
             var day = new Date();
             day.setDate(day.getDate() - 2);
             if(date > day) {
@@ -115,6 +119,38 @@ module.exports = {
         }
 
         return {match, dateFormat}
+    },
+
+    getAgentMatch: async function(filterChatAgent, filterChatDate, representative){
+        let match = {};
+
+        if(filterChatAgent !== 'all'){
+            match.agents = [{_id: mongoose.Types.ObjectId(filterChatAgent)}];
+        } else {
+            var agents = await userService.findAllByRepresentative(representative)
+            match.agents = [...agents];
+        } 
+
+        if(filterChatDate === 'all'){
+            match.date = null;
+            return match;
+        }
+
+        filterChatDate = JSON.parse(filterChatDate)
+
+        if(filterChatDate["from"] !== undefined && filterChatDate["to"] !== undefined){
+            var from = new Date(filterChatDate["from"]);
+            var to = new Date(filterChatDate["to"]);
+
+            match.date = { $gte: from, $lte: to };
+        }
+
+        if(filterChatDate["from"] === undefined && filterChatDate["to"] === undefined){
+            var date = new Date(filterChatDate);
+            match.date =  { $gte: date };
+        }
+
+        return match
     },
 
     allChats: async function(match, dateFormat){
@@ -135,27 +171,45 @@ module.exports = {
         return satisfaction;
     },
 
-    availability: async function(match, dateFormat){
-        return "";
+    activity: async function(match){
+        let statistics = []
+        let activityStatistics = []
+        for (let agent of match.agents) {
+            statistics.push( await userService.findActivityById(agent._id, match.date) )
+        }
+        if(statistics){
+            statistics.map(s => {
+                activityStatistics.push({
+                    agent: {
+                        _id : s._id,
+                        firstname : s.firstname,
+                        lastname : s.lastname,
+                    },
+                    data: s.activities
+                });
+            });
+        }
+        return activityStatistics;
     },
 
-    chatTime: async function(match, dateFormat){
-        return "";
-        
+    workHours: async function(match){
+        let statistics = []
+        let workStatistics = []
+        for (let agent of match.agents) {
+            statistics.push( await userService.findWorkHoursById(agent._id, match.date) )
+        }
+        if(statistics){
+            statistics.map(s => {                
+                workStatistics.push({
+                    agent: {
+                        _id : s._id,
+                        firstname : s.firstname,
+                        lastname : s.lastname,
+                    },
+                    data: s.workHours
+                });
+            });
+        }
+        return workStatistics;
     },
-
-    ativity: async function(match, dateFormat){
-        return "";
-        
-    },
-
-    workHours: async function(match, dateFormat){
-        return "";
-        
-    },
-
-
-
-
-
 }
