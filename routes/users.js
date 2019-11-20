@@ -4,7 +4,6 @@ const router = express.Router();
 const userController = require('../api/controllers/users');
 const authorizate = require('../BuisnessLogic/auth/authorizate');
 
-//musi być na górze (CastError: Cast to ObjectId failed for value "working-now" at path "_id" for model "User")
 router.get('/working-now', authorizate.authorizate, userController.getWorkingUsers);
 router.get('/working-random', authorizate.authorizate, userController.getRandomWorkingUser);
 
@@ -21,6 +20,5 @@ router.put('/user', authorizate.authorizate, userController.updateById);
 router.put('/:AgentId', authorizate.authorizate, userController.updateById);
 
 router.delete('/:AgentId', authorizate.authorizate, userController.delete);
-// router.delete('/user', authorizate.authorizate, userController.delete);
 
 module.exports = router;

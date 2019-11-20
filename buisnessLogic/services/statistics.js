@@ -1,33 +1,33 @@
 const chatModel = require('../../database/models/chats');
 const userService = require('../services/users');
-const activityService = require('../services/activity');
-const workHoursService = require('../services/workHours');
 var moment = require('moment');
 var mongoose = require('mongoose');
+var Joi = require('joi');
 
 module.exports = {
     getChatsStatistics: async function(selected, filterChatAgent, filterChatDate) {
-        let {match, dateFormat} = this.getChatMatch(filterChatAgent, filterChatDate);
-        let timeInterval = this.getTimeInterval(filterChatDate);
-        let statistics = await this.getStatistics(selected, match, dateFormat);
         let result = [];
+        const { match, dateFormat } = this.getChatMatch(filterChatAgent, filterChatDate);
+        const timeInterval = this.getTimeInterval(filterChatDate);
+
+        const statistics = await this.getStatistics(selected, match, dateFormat);
+
         if(statistics){
             for (let time of timeInterval) {
-                var data = statistics.find(d => d._id === time);
+                let data = statistics.find(d => d._id === time);
                 result.push({
                     time: time,
                     data: data ? data.data : null,
                 });
             }
         }
-        console.log(result)
+        
         return result;
     },
 
     getAgentsStatistics: async function(representative, selected, filterChatAgent, filterChatDate) {
         let match = await this.getAgentMatch(filterChatAgent, filterChatDate, representative);
         let statistics = await this.getStatistics(selected, match);
-        console.log(statistics)
         return statistics;
     },
 
@@ -62,6 +62,7 @@ module.exports = {
 
         var day = new Date();
         day.setDate(day.getDate() - 2);
+        
         if(from > day) {
             var timeArray = [];
             for (var i = 0; i < 24; i++) {
@@ -156,7 +157,8 @@ module.exports = {
     allChats: async function(match, dateFormat){
         let allChats = await chatModel.aggregate([
             { $match: match },
-            { $group: { _id: { $dateToString: { format: dateFormat, date: "$date" } }, data: { $sum: 1 } } },
+            { $group: { _id: { $dateToString: { format: dateFormat, date: "$date" } }, 
+                        data: { $sum: 1 } } },
             { $sort: { _id: 1 } }
         ])
         return allChats;
@@ -165,7 +167,8 @@ module.exports = {
     satisfaction: async function(match, dateFormat){
         let satisfaction = await chatModel.aggregate([
             { $match: match },
-            { $group: { _id: { $dateToString: { format: dateFormat, date: "$date" } }, data: { $avg: "$rating" } } },
+            { $group: { _id: { $dateToString: { format: dateFormat, date: "$date" } }, 
+                        data: { $avg: "$rating" } } },
             { $sort: { _id: 1 } }
         ])
         return satisfaction;
@@ -177,6 +180,7 @@ module.exports = {
         for (let agent of match.agents) {
             statistics.push( await userService.findActivityById(agent._id, match.date) )
         }
+
         if(statistics){
             statistics.map(s => {
                 activityStatistics.push({
@@ -189,15 +193,18 @@ module.exports = {
                 });
             });
         }
+
         return activityStatistics;
     },
 
     workHours: async function(match){
         let statistics = []
         let workStatistics = []
+        
         for (let agent of match.agents) {
             statistics.push( await userService.findWorkHoursById(agent._id, match.date) )
         }
+
         if(statistics){
             statistics.map(s => {                
                 workStatistics.push({
@@ -210,6 +217,7 @@ module.exports = {
                 });
             });
         }
+        
         return workStatistics;
     },
 }

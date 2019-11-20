@@ -4,14 +4,26 @@ const authenticate = require('../../BuisnessLogic/auth/authenticate');
 
 module.exports = {
     create: async function(req, res) {
-        const visitor = await visitorService.create({
-                lat: req.body.geoLocation.lat || "Brak danych", 
-                lng: req.body.geoLocation.lng || "Brak danych"
-            }, 
-            req.body.ipAddress || "Brak danych", 
-            req.body.browserSoftware || "Brak danych", 
-            req.body.operatingSoftware || "Brak danych", 
-            req.body.representative
+        const {geoLocation: {lat, lng}, browserSoftware, operatingSoftware} = req.body;
+        const validation = visitorService.visitorValidate({
+            geoLocation: {lat, lng}, 
+            browserSoftware, 
+            operatingSoftware
+        })
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
+        const visitor = await visitorService.create(
+            { lat: geoLocation.lat || "Brak danych", 
+              lng: geoLocation.lng || "Brak danych" }, 
+            ipAddress || "Brak danych", 
+            browserSoftware || "Brak danych", 
+            operatingSoftware || "Brak danych", 
+            representative
         )
 
         if(!visitor){
@@ -19,10 +31,9 @@ module.exports = {
                 message: "Visitor can not be added!"
             });
         }
-
-        console.log(visitor.representative)
         
-        const token = await authenticate.generateToken(visitor._id, visitor.representative, req.app.get('secretKey'));
+        const token = await authenticate.generateToken(
+            visitor._id, visitor.representative, process.env.SECRET_KEY);
 
         if(!token){
             return res.status(400).json({
@@ -37,7 +48,7 @@ module.exports = {
         });
     },
     
-    update: async function(req, res) {
+    updateStatus: async function(req, res) {
         const visitor = await visitorService.findById(req.body.id)
 
         if(!visitor){
@@ -63,7 +74,8 @@ module.exports = {
     },
 
     getById: async function(req, res) {
-        const visitorInfo = await visitorService.findById(req.params.visitorId ? req.params.visitorId : req.body.id)
+        const visitorInfo = await visitorService.findById(
+            req.params.visitorId ? req.params.visitorId : req.body.id)
 
         if(!visitorInfo) {
             return res.status(404).json({
@@ -78,7 +90,8 @@ module.exports = {
     },
 
     countChats: async function(req, res) {
-        const countedChats = await visitorService.countChats(req.params.visitorId ? req.params.visitorId : req.body.id)
+        const countedChats = await visitorService.countChats(
+            req.params.visitorId ? req.params.visitorId : req.body.id)
 
         if(!countedChats) {
             return res.status(200).json({
@@ -94,7 +107,8 @@ module.exports = {
     },
 
     getAll: async function(req, res) {
-        const visitorsInfo = await visitorService.findAllByRepresentative(req.body.representative == null? req.body.id: req.body.representative)
+        const visitorsInfo = await visitorService.findAllByRepresentative(
+            req.body.representative == null? req.body.id: req.body.representative)
 
         if(!visitorsInfo) {
             return res.status(404).json({

@@ -1,5 +1,6 @@
 const activityModel = require('../../database/models/activities');
 const workHours = require('./workHours');
+var Joi = require('joi');
 
 module.exports = {
     create: async function(userId) {
@@ -8,7 +9,8 @@ module.exports = {
 
         const activity = await activityModel.create({ 
             agent: userId,
-            from: now})
+            from: now
+        })
 
         if(activity) {
             if(workHour && now.getHours() >= workHour.hourFrom) {

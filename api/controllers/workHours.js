@@ -2,7 +2,18 @@ const workHoursService = require('../../buisnessLogic/services/workHours');
 
 module.exports = {
     create: async function(req, res) {
-        const newWorkHours = await workHoursService.create(req.params.AgentId ? req.params.AgentId : req.body.id, req.body.hourFrom, req.body.hourTo, req.body.dayOfWeek)
+        const {hourFrom, hourTo, dayOfWeek} = req.body;
+        const validation = workHoursService.workHoursValidate({hourFrom, hourTo, dayOfWeek})
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
+        const newWorkHours = await workHoursService.create(
+            req.params.AgentId ? req.params.AgentId : req.body.id, 
+            hourFrom, hourTo, dayOfWeek)
         
         if(!newWorkHours) {
             return res.status(400).json({
@@ -41,7 +52,8 @@ module.exports = {
     },
 
     getByAgentId: async function(req, res) {
-        const workHours = await workHoursService.findByUserId(req.params.AgentId ? req.params.AgentId : req.body.id);
+        const workHours = await workHoursService.findByUserId(
+            req.params.AgentId ? req.params.AgentId : req.body.id);
             
         if(!workHours) {
             return res.status(404).json({
@@ -57,7 +69,8 @@ module.exports = {
     },
 
     getDayByAgentId: async function(req, res) {
-        const workHours = await workHoursService.findByUserIdAndDay(req.params.AgentId ? req.params.AgentId : req.body.id, req.body.dayOfWeek)
+        const workHours = await workHoursService.findByUserIdAndDay(
+            req.params.AgentId ? req.params.AgentId : req.body.id, req.body.dayOfWeek)
             
         if(!workHours) {
             return res.status(404).json({

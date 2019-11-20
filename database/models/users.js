@@ -62,17 +62,6 @@ UserSchema.pre('save', async function(next){
     next();
 });
 
-UserSchema.methods.joiValidate = function(user) {
-	var Joi = require('joi');
-	var schema = {
-		firstname: Joi.types.String().min(1).max(20).required(),
-		lastname: Joi.types.String().min(1).max(20).required(),
-		email: Joi.types.String().min(1).max(60).email().required(),
-		password: Joi.types.String().min(6).max(30).regex(/[a-zA-Z0-9]{6,30}/).required(),
-	}
-	return Joi.validate(user, schema);
-}
-
 UserSchema.pre('remove', function() {
     const Chats = require('./chats');
     Chats.remove({_id: { $in: this.chats }}, (err, res) => {

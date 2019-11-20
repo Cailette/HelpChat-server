@@ -1,9 +1,18 @@
 const mailService = require('../../buisnessLogic/services/mail');
 const userService = require('../../buisnessLogic/services/users');
+var Joi = require('joi');
 
 module.exports = {
     sendMail: async function(req, res) {
-        console.log("sendMail " + req.body.representative)
+        let {sender, subject, text} = req.body;
+        const validation = mailService.mailValidate({sender, subject, text})
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
         let recipient = await userService.findRandomUserByRepresentative(req.body.representative);
 
         if(!recipient){
@@ -12,7 +21,7 @@ module.exports = {
             });
         }
 
-        const sendMail = await mailService.sendMail(req.body.sender, req.body.subject, req.body.text, recipient.email)
+        const sendMail = await mailService.sendMail(sender, subject, text, recipient.email)
 
         if(!sendMail){
             return res.status(400).json({

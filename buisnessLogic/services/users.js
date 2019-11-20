@@ -1,5 +1,6 @@
 const userModel = require('../../database/models/users');
 const workHoursModel = require('../../database/models/workHours');
+var Joi = require('joi');
 
 module.exports = {
     create: async function(firstname, lastname, email, password, representative) {
@@ -17,7 +18,8 @@ module.exports = {
     },
 
     findById: async function(id) {
-        return await userModel.findById(id).select('-password');
+        return await userModel.findById(id)
+            .select('-password');
     },
 
     findActivityById: async function(id, match) {
@@ -65,13 +67,13 @@ module.exports = {
         return await user.save();
     },
 
-    // POTRZEBA USUWANIA PRZEDSTAWICIELA RÓWNIEŻ!!!
     delete: async function(id){
         return await userModel.deleteOne({ _id: id })
     },
 
     findAllByRepresentative: async function(representative) {
-        return await userModel.find({ $or : [{ _id: representative }, { representative: representative }]}).select('-password');
+        return await userModel.find({ $or : [{ _id: representative }, { representative: representative }]})
+            .select('-password');
     },
 
     findActiveUsersByRepresentative: async function(representative) {
@@ -80,7 +82,8 @@ module.exports = {
                 { $or : [{ _id: representative }, { representative: representative }] },
                 { isActive : true } 
             ]
-        }).select('-password');
+        })
+        .select('-password');
     },
 
     findWorkingUsersByRepresentative: async function(representative) {
@@ -94,8 +97,14 @@ module.exports = {
         const workingUsers = [];
 
         for(var user of users){
-            const workHours = await workHoursModel.findOne({ agent: user._id, dayOfWeek: now.getDay(), dayTo: null });
-            if((workHours && now.getHours() >= workHours.hourFrom && now.getHours() < workHours.hourTo) || !workHours) {
+            const workHours = await workHoursModel.findOne({ 
+                agent: user._id, 
+                dayOfWeek: now.getDay(), 
+                dayTo: null 
+            });
+            
+            if((workHours && now.getHours() >= workHours.hourFrom 
+                && now.getHours() < workHours.hourTo) || !workHours) {
                 workingUsers.push(user);
             }
         }
@@ -122,4 +131,32 @@ module.exports = {
 
         return users[Math.floor(Math.random() * users.length)];
     },
+
+    userValidate: function(user) {
+        var schema = {
+            firstname: Joi.string().min(1).max(20).required(),
+            lastname: Joi.string().min(1).max(20).required(),
+            email: Joi.string().min(1).max(60).email().required(),
+            password: Joi.string().min(6).max(30).regex(/[a-zA-Z0-9]{6,30}/).required(),
+        }
+        return Joi.validate(user, schema);
+    },
+
+    updateUserValidate: function(user) {
+        var schema = {
+            firstname: Joi.string().min(1).max(20),
+            lastname: Joi.string().min(1).max(20),
+            email: Joi.string().min(1).max(60).email(),
+            password: Joi.string().min(6).max(30).regex(/[a-zA-Z0-9]{6,30}/),
+        }
+        return Joi.validate(user, schema);
+    },
+
+    loginValidate: function(user) {
+        var schema = {
+            email: Joi.string().min(1).max(60).email().required(),
+            password: Joi.string().min(6).max(30).regex(/[a-zA-Z0-9]{6,30}/).required(),
+        }
+        return Joi.validate(user, schema);
+    }
 }

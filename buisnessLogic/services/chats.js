@@ -1,4 +1,5 @@
 const chatModel = require('../../database/models/chats');
+var Joi = require('joi');
 
 module.exports = {
     create: async function(visitor, agent) {
@@ -106,4 +107,19 @@ module.exports = {
         chat.isActive = false; 
         return await chat.save();
     },
+
+    chatValidate: function(chat) {
+        var schema = {
+            visitor: Joi.any().not(null).required(),
+            agent: Joi.any().not(null).required(),
+        }
+        return Joi.validate(chat, schema);
+    },
+
+    ratingValidate: function(rating) {
+        var schema = {
+            rating: Joi.number().min(1).max(5).required(),
+        }
+        return Joi.validate(rating, schema);
+    }
 } 

@@ -1,8 +1,11 @@
 const workHoursModel = require('../../database/models/workHours');
+var Joi = require('joi');
 
 module.exports = {
     create: async function(agent, hourFrom, hourTo, dayOfWeek) {
-        const workHour = await workHoursModel.findOne({ agent: agent, dayOfWeek:dayOfWeek, dayTo: null })
+        const workHour = await workHoursModel.findOne({ 
+            agent: agent, dayOfWeek:dayOfWeek, dayTo: null 
+        })
         if(workHour) {
             workHour.dayTo = Date.now();
             await workHour.save();
@@ -37,4 +40,13 @@ module.exports = {
         return await workHoursModel.findOne({ agent: id, dayOfWeek: dayOfWeek, dayTo: null})
             .select('-dayTo -agent -dayFrom')
     },
+
+    workHoursValidate: function(workHours) {
+        var schema = {
+            dayOfWeek: Joi.number().required(),
+            hourTo: Joi.number().required(),
+            hourFrom: Joi.number().required(),
+        }
+        return Joi.validate(workHours, schema);
+    }
 }

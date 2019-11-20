@@ -5,8 +5,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
-        console.log("SOCKET CONNECTION");
-
         socket
             .on('init', init)
             .on('connectWithAgent', connectWithAgent)
@@ -18,24 +16,18 @@ module.exports = (io) => {
             .on('message', message);
 
         function init(token, user){
-            jwt.verify(token, 'HelpChatRestApi', (err, decoded) => {
-                socket.clientId = decoded.id;
+            jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+                socket.userId = decoded.id;
                 socket.representative = decoded.representative;
             });
 
             socket.user = user;
-
-            if(user === "visitor") {
-                socket.room = null;
-            }
+            socket.room = null;
 
             if(user === "agent") {
-                socket.agentRoom = socket.clientId;
-                socket.room = null;
-                socket.join(socket.clientId);
+                socket.agentRoom = socket.userId;
+                socket.join(socket.agentRoom);
             }
-
-            console.log("CONNECTION: " + socket.user);
         }
 
         function locationChange(location) {
@@ -50,8 +42,8 @@ module.exports = (io) => {
             if(agentId !== null) {
                 firstChat(agentId);
             } else {
-                let checkIfExistChat = await chatService.findActiveByVisitorId(socket.clientId);
-                nextChat(checkIfExistChat);
+                let existChat = await chatService.findActiveByVisitorId(socket.userId);
+                nextChat(existChat);
             }
         }
 
@@ -59,27 +51,27 @@ module.exports = (io) => {
             socket.nextChat = false;
             socket.agent = agentId;
 
-            let newChat = await chatService.create(socket.clientId, socket.agent)
+            let newChat = await chatService.create(socket.userId, socket.agent)
             if(!newChat){
                 socket.emit('error', "Can not create chat.");
             }
             socket.room = newChat._id;
             socket.join(socket.room);
-            console.log("newChat: " + socket.room);
 
-            let thisChat = await chatService.findActiveByVisitorId(socket.clientId);
-            socket.emit('connectionWithAgent', await chatService.findActiveByVisitorId(socket.clientId));
+            let thisChat = await chatService.findActiveByVisitorId(socket.userId);
+
+            socket.emit('connectionWithAgent', await chatService.findActiveByVisitorId(socket.userId));
+
             socket.to(socket.agent).emit('newChat');
             socket.to(socket.agent).emit('updateChatList', thisChat);
         }
 
         async function nextChat(chat){
-            console.log("nextChat");
             socket.nextChat = true; 
             socket.agent = chat.agent._id;
             socket.room = chat._id;
-            socket.join(socket.room);
 
+            socket.join(socket.room);
             socket.emit('nextChat', chat);
         }
 
@@ -87,68 +79,66 @@ module.exports = (io) => {
             const message = await messagesService.create(socket.room, content, socket.user);
 
             socket.emit('message', message);
-            if(socket.user === 'agent'){
-                console.log("to visitor " + content);
-                socket.broadcast.to(socket.room).emit('message', message);
-            }
+            socket.to(socket.room).emit('message', message);
+
             if(socket.user === 'visitor'){
-                console.log("to agent " + content);
-                socket.broadcast.to(socket.room).emit('message', message);
-                socket.broadcast.to(socket.agent).emit('message', message);
+                socket.to(socket.agent).emit('message', message);
+                socket.to(socket.agent).emit('newChat');
             }
         }
 
         function switchRoom(room) {
             socket.leave(socket.room);
             socket.room = null;
-            if(room !== socket.clientId) {
+
+            if(room !== socket.userId) {
                 socket.room = room;
                 socket.join(room);
-                console.log("join " + socket.room)
             }
-            console.log("I am in: " + socket.room)
         }
 
         async function disconnect() {
-            if(socket.user === "visitor"){
-                if(!socket.nextChat) {
-                    console.log("DISCONNECT VISITOR: " + socket.room);
-                    let chat = await chatService.findById(socket.room);
-                    if(!chat){
-                        console.log("DISCONNECT ERROR in: " + socket.room);
-                    }
-                    let updatedChat = chatService.updateActivityFalse(chat)
-                    if(!updatedChat){
-                        console.log("DISCONNECT ERROR in: " + socket.room);
-                    }
-                    socket.to(socket.agent).emit('visitorDisconnect', socket.room);
-                }
-                socket.leave(socket.room);
-                socket.room = null;
-            }
+            if(socket.user === "visitor") await disconnectVisitor();
+            if(socket.user === "agent") await disconnectAgent();
+        }
 
-            if(socket.user === "agent"){
-                if(!socket.nextChat) {
-                    console.log('DISCONNECT AGENT');
-                    if(socket.room !== null){
-                        socket.to(socket.room).emit('agentDisconnect');
-                        socket.leave(socket.room);
-                    }
+        async function disconnectVisitor(){
+            if(!socket.nextChat) {
+                let chat = await chatService.findById(socket.room);
+                if(!chat){
+                    console.log("DISCONNECT ERROR in: " + socket.room);
                 }
-                socket.leave(socket.clientId);
+                let updatedChat = chatService.updateActivityFalse(chat)
+                if(!updatedChat){
+                    console.log("DISCONNECT ERROR in: " + socket.room);
+                }
+                socket.to(socket.agent).emit('visitorDisconnect', socket.room);
             }
+            socket.leave(socket.room);
+            socket.room = null;
+        }
+
+        async function disconnectAgent(){
+            if(!socket.nextChat) {
+                if(socket.room !== null){
+                    socket.to(socket.room).emit('agentDisconnect');
+                    socket.leave(socket.room);
+                }
+            }
+            socket.leave(socket.userId);
         }
 
         async function agentCloseChat() {
-            console.log('agentCloseChat');
             let chat = await chatService.findById(socket.room);
             if(!chat){
-                console.log("DISCONNECT ERROR in: " + socket.room);
+                socket.emit('error', "Can not found chat.");
             }
+
             let updatedChat = chatService.updateActivityFalse(chat)
             if(!updatedChat){
-                console.log("DISCONNECT ERROR in: " + socket.room);
+                socket.emit('error', "Can not update chat.");
             }
+
             socket.to(socket.room).emit('agentDisconnect');
             socket.leave(socket.room);
         }

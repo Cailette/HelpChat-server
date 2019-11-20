@@ -4,6 +4,15 @@ const authenticate = require('../../buisnessLogic/auth/authenticate')
 
 module.exports = {
     create: async function(req, res) {
+        const {firstname, lastname, email, password} = req.body;
+        const validation = userService.userValidate({firstname, lastname, email, password})
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
         const user = await userService.findByEmail(req.body.email);
 
         if(user){
@@ -13,10 +22,7 @@ module.exports = {
         }
 
         const newUser = await userService.create(
-            req.body.firstname, 
-            req.body.lastname, 
-            req.body.email, 
-            req.body.password, 
+            firstname, lastname, email, password, 
             req.body.id ? req.body.id : null 
         );
 
@@ -33,7 +39,16 @@ module.exports = {
     },
 
     login: async function(req, res) {
-        const user = await userService.findByEmail(req.body.email);
+        const {email, password} = req.body;
+        const validation = userService.loginValidate({email, password})
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
+        const user = await userService.findByEmail(email);
         
         if(!user){
             return res.status(404).json({
@@ -41,7 +56,7 @@ module.exports = {
             });
         } 
         
-        const auth = await authenticate.authenticate(req.body.password, user.password);
+        const auth = await authenticate.authenticate(password, password);
 
         if(!auth){
             return res.status(400).json({
@@ -49,7 +64,8 @@ module.exports = {
             });
         } 
         
-        const token = await authenticate.generateToken(user._id, user.representative, req.app.get('secretKey'));
+        const token = await authenticate.generateToken(
+            user._id, user.representative, process.env.SECRET_KEY);
 
         if(!token){
             return res.status(400).json({
@@ -64,7 +80,8 @@ module.exports = {
     },
 
     getById: async function(req, res) {
-        const user = await userService.findById(req.params.AgentId ? req.params.AgentId : req.body.id);
+        const user = await userService.findById(
+            req.params.AgentId ? req.params.AgentId : req.body.id);
 
         if(!user) {
             return res.status(404).json({
@@ -79,7 +96,22 @@ module.exports = {
     },
 
     updateById: async function(req, res) {
-        const user = await userService.findUser(req.params.AgentId ? req.params.AgentId : req.body.id)
+        const {firstname, lastname, email, password} = req.body;
+        const validation = userService.updateUserValidate({
+            firstname, 
+            lastname, 
+            email, 
+            password
+        })
+
+        if(validation.error !== null){
+            return res.status(400).json({
+                message: "Wrong data!"
+            });
+        }
+
+        const user = await userService.findUser(
+            req.params.AgentId ? req.params.AgentId : req.body.id)
 
         if(!user) {
             return res.status(404).json({
@@ -89,10 +121,10 @@ module.exports = {
         
         const userUpdated = await userService.updateUser(
             user,
-            req.body.firstname ? req.body.firstname : user.firstname,
-            req.body.lastname ? req.body.lastname : user.lastname,
-            req.body.email ? req.body.email : user.email,
-            req.body.password ? req.body.password : user.password
+            firstname ? firstname : user.firstname,
+            lastname ? lastname : user.lastname,
+            email ? email : user.email,
+            password ? password : user.password
         );
 
         if(!userUpdated) {
@@ -137,7 +169,8 @@ module.exports = {
     },
 
     delete: async function(req, res){
-        const userDeleted = await userService.delete(req.params.AgentId ? req.params.AgentId : req.body.id)
+        const userDeleted = await userService.delete(
+            req.params.AgentId ? req.params.AgentId : req.body.id)
 
         if(!userDeleted) {
             return res.status(401).json({
@@ -191,6 +224,6 @@ module.exports = {
         return res.status(200).json({
             message: "User found successfully!", 
             user: user
-    }); 
+        }); 
     },
 }

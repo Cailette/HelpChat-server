@@ -1,3 +1,4 @@
+require('dotenv').config({path: __dirname + '/.env'})
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -10,12 +11,6 @@ const cors = require("cors");
 var app = express();
 app.use(cors());
 
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger.json');
- 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// routers 
 var indexRouter = require('./routes/index');
 var statisticsRouter = require('./routes/statistics');
 var usersRouter = require('./routes/users');
@@ -28,18 +23,6 @@ require('dotenv').config();
 app.set('secretKey', 'HelpChatRestApi'); 
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-// app.use((req, res, next) => {
-//   var allowedOrigins = ['http://localhost:4200', 'http://localhost:4000', 'http://localhost:5000'];
-//   var origin = req.headers.origin;
-//   if(allowedOrigins.indexOf(origin) > -1){
-//        res.setHeader('Access-Control-Allow-Origin', origin);
-//   }
-//   res.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-//   res.append("Access-Control-Allow-Headers", "Origin, Accept, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, x-access-token");
-//   res.append('Access-Control-Allow-Credentials', true);
-//   next();
-// });
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
