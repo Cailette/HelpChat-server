@@ -41,11 +41,11 @@ module.exports = {
     login: async function(req, res) {
         const {email, password} = req.body;
         const validation = userService.loginValidate({email, password})
-
+        console.log(validation.error)
         if(validation.error !== null){
             return res.status(400).json({
                 message: "Wrong data!"
-            });
+            }); 
         }
 
         const user = await userService.findByEmail(email);
@@ -56,7 +56,7 @@ module.exports = {
             });
         } 
         
-        const auth = await authenticate.authenticate(password, password);
+        const auth = await authenticate.authenticate(password, user.password);
 
         if(!auth){
             return res.status(400).json({

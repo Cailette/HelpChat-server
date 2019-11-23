@@ -28,7 +28,9 @@ module.exports = {
             .populate({
                 path: 'activities',
                 match: matchPopulate,
-                sort: { 'from': 1 }
+                options: { 
+                    sort: { 'from': 'asc' }
+                }
             })
             .select('_id firstname lastname email')
     },
@@ -39,7 +41,9 @@ module.exports = {
             .populate({
                 path: 'workHours',
                 match: matchPopulate,
-                sort: { 'dayFrom': 1 }
+                options: { 
+                    sort: { 'dayFrom': 'asc' }
+                }
             })
             .select('_id firstname lastname email')
     },

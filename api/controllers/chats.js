@@ -74,12 +74,6 @@ module.exports = {
     },
 
     rating: async function(req, res) {
-        if(chatService.ratingValidate({rating: req.body.rating})){
-            return res.status(400).json({
-                message: "Wrong data!"
-            });
-        }
-
         const chat = await chatService.findById(req.params.ChatId);
             
         if(!chat) {
