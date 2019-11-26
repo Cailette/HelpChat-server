@@ -1,5 +1,4 @@
 const chatService = require('../../buisnessLogic/services/chats');
-const MessageService = require('../../buisnessLogic/services/messages')
 
 module.exports = {
     getById: async function(req, res) {
@@ -12,7 +11,7 @@ module.exports = {
         }
 
         return res.status(200).json({
-            message: "Chat updated successfully!", 
+            message: "Chat found successfully!", 
             chat: chat
         });
     },
@@ -54,7 +53,7 @@ module.exports = {
             req.params.VisitorId ? req.params.VisitorId : req.body.id);
 
         return res.status(200).json({
-            message: "Chats found successfully!", 
+            message: chat? "Chat found successfully!" : "Active chat not exist!", 
             user: chat? chat.agent : null
         });
     },

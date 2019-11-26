@@ -9,7 +9,7 @@ module.exports = {
 
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
             });
         }
 
@@ -41,10 +41,10 @@ module.exports = {
     login: async function(req, res) {
         const {email, password} = req.body;
         const validation = userService.loginValidate({email, password})
-        console.log(validation.error)
+        
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
             }); 
         }
 
@@ -106,7 +106,7 @@ module.exports = {
 
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
             });
         }
 

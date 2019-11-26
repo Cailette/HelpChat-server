@@ -21,22 +21,6 @@ module.exports = {
         })
     },
 
-    findInactiveByUserId: async function(id) {
-        return await chatModel.find({ isActive: false })
-            .populate({
-                path: 'agent',
-                match: { _id: id},
-                select: '_id firstname lastname email'
-            })
-            .populate('visitor')
-            .populate({ 
-                path: 'messages', 
-                options: { 
-                    sort: { date: -1 } 
-                } 
-            })
-    },
-
     findInactiveByRepresentative: async function(id) {
         return await chatModel.find({ isActive: false })
             .populate({

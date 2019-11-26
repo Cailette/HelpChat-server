@@ -7,7 +7,7 @@ module.exports = {
 
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
             });
         }
 
@@ -40,7 +40,7 @@ module.exports = {
 
         if (!updatedWorkHours) {
             return res.status(401).json({
-                message: "Work Hours can not be updated !"
+                message: "Work Hours can not be updated!"
             });
         }
 

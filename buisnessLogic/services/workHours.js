@@ -4,8 +4,11 @@ var Joi = require('joi');
 module.exports = {
     create: async function(agent, hourFrom, hourTo, dayOfWeek) {
         const workHour = await workHoursModel.findOne({ 
-            agent: agent, dayOfWeek:dayOfWeek, dayTo: null 
+            agent: agent, 
+            dayOfWeek: dayOfWeek, 
+            dayTo: null 
         })
+
         if(workHour) {
             workHour.dayTo = Date.now();
             await workHour.save();

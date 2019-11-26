@@ -37,7 +37,7 @@ const VisitorSchema = new Schema({
     representative: {
         type: mongoose.Schema.Types.ObjectId, 
         trim: true,
-        default: null,
+        required: true,
         ref: 'User'
     },
     chats: [{

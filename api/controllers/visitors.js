@@ -1,26 +1,32 @@
 const visitorService = require('../../buisnessLogic/services/visitors');
 const authenticate = require('../../BuisnessLogic/auth/authenticate');
-
+var mongoose = require('mongoose');
 
 module.exports = {
     create: async function(req, res) {
-        const {geoLocation: {lat, lng}, browserSoftware, operatingSoftware} = req.body;
+        const { browserSoftware, operatingSoftware, representative} = req.body;
+        const { lat, lng } = req.body.geoLocation;
         const validation = visitorService.visitorValidate({
-            geoLocation: {lat, lng}, 
+            lat, lng,
             browserSoftware, 
             operatingSoftware
         })
 
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
+            });
+        }
+
+        if(!mongoose.Types.ObjectId.isValid(representative)){
+            return res.status(400).json({
+                message: "Licence ID is required!"
             });
         }
 
         const visitor = await visitorService.create(
-            { lat: geoLocation.lat || "Brak danych", 
-              lng: geoLocation.lng || "Brak danych" }, 
-            ipAddress || "Brak danych", 
+            { lat: lat || "Brak danych", 
+              lng: lng || "Brak danych" },
             browserSoftware || "Brak danych", 
             operatingSoftware || "Brak danych", 
             representative
@@ -37,7 +43,7 @@ module.exports = {
 
         if(!token){
             return res.status(400).json({
-                message: "Token error."
+                message: "User created but token error."
             });
         } 
 
@@ -46,6 +52,22 @@ module.exports = {
             visitor: visitor,
             token: token
         });
+    },
+
+    getById: async function(req, res) {
+        const visitorInfo = await visitorService.findById(
+            req.params.visitorId ? req.params.visitorId : req.body.id)
+
+        if(!visitorInfo) {
+            return res.status(404).json({
+                message: "Visitor can not be found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Visitor found successfully!", 
+            visitor: visitorInfo
+        }); 
     },
     
     updateStatus: async function(req, res) {
@@ -73,19 +95,19 @@ module.exports = {
         }); 
     },
 
-    getById: async function(req, res) {
-        const visitorInfo = await visitorService.findById(
-            req.params.visitorId ? req.params.visitorId : req.body.id)
+    getAll: async function(req, res) {
+        const visitorsInfo = await visitorService.findAllByRepresentative(
+            req.body.representative == null? req.body.id: req.body.representative)
 
-        if(!visitorInfo) {
+        if(!visitorsInfo) {
             return res.status(404).json({
-                message: "Visitor can not be found!"
+                message: "Visitors can not be found!"
             });
         }
 
         return res.status(200).json({
-            message: "Visitor found successfully!", 
-            visitor: visitorInfo
+            message: "Visitors found successfully!", 
+            visitors: visitorsInfo
         }); 
     },
 
@@ -103,22 +125,6 @@ module.exports = {
         return res.status(200).json({
             message: "Counted successfully!", 
             countedChats: countedChats
-        }); 
-    },
-
-    getAll: async function(req, res) {
-        const visitorsInfo = await visitorService.findAllByRepresentative(
-            req.body.representative == null? req.body.id: req.body.representative)
-
-        if(!visitorsInfo) {
-            return res.status(404).json({
-                message: "Visitors can not be found!"
-            });
-        }
-
-        return res.status(200).json({
-            message: "Visitors found successfully!", 
-            visitors: visitorsInfo
         }); 
     },
 }

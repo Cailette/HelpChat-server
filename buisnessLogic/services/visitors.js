@@ -5,14 +5,13 @@ const jwt = require('jsonwebtoken');
 var Joi = require('joi');
 
 module.exports = {
-    create: async function(geoLocation, ipAddress, 
+    create: async function(geoLocation, 
         browserSoftware, operatingSoftware, representative) {
         return await visitorModel.create({ 
             geoLocation: {
                 lat: geoLocation.lat, 
                 lng: geoLocation.lng
             },
-            ipAddress: ipAddress, 
             browserSoftware: browserSoftware,
             operatingSoftware: operatingSoftware,
             representative: representative
@@ -49,14 +48,12 @@ module.exports = {
 
     visitorValidate: function(visitor) {
         var schema = {
-            geoLocation: {
-                lat: Joi.string(), 
-                lng: Joi.string()
-            },
-            lastVisit: Joi.any().not(null),
+            lat: Joi.number(), 
+            lng: Joi.number(),
             browserSoftware: Joi.string(),
             operatingSoftware: Joi.string(),
         }
+        console.log(Joi.validate(visitor, schema))
         return Joi.validate(visitor, schema);
     }
 }

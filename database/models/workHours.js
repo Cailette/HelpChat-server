@@ -7,7 +7,6 @@ const WorkHoursSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         trim: true,
-        default: null,
         ref: 'User'
     },
     hourFrom: {

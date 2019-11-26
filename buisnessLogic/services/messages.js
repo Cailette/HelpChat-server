@@ -1,5 +1,7 @@
 const messagesModel = require('../../database/models/messages');
 var Joi = require('joi');
+const faker = require("faker");
+ 
 
 module.exports = {
     create: async function(chat, content, sender) {
