@@ -140,6 +140,7 @@ describe("VisitorController", function() {
         expect(json.args[0][0].message).to.equal("Work Hours found successfully!")
 
         findByUserIdSub.restore();
+        findByIdSub.restore();
       });
     });
 

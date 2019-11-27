@@ -6,7 +6,7 @@ module.exports = {
         return bcrypt.compare(password, userPassword);
     },
 
-    generateToken: async function(id, representative, secretKey){
-        return jwt.sign({ id: id, representative: representative}, secretKey);
+    generateToken: async function(id, representative){
+        return jwt.sign({ id: id, representative: representative}, process.env.SECRET_KEY);
     }
 }

@@ -1,22 +1,24 @@
 const activityModel = require('../../database/models/activities');
-const workHours = require('./workHours');
+const workHoursService = require('./workHours');
 var Joi = require('joi');
 
 module.exports = {
     create: async function(userId) {
         const now = new Date(Date.now());
-        const workHour = await workHours.findByUserIdAndDay(userId, now.getDay())
-
         const activity = await activityModel.create({ 
             agent: userId,
             from: now
         })
 
+        const workHours = await workHoursService.findByUserId(userId)
         if(activity) {
-            if(workHour && now.getHours() >= workHour.hourFrom) {
-                activity.inTime = false;
+            if(workHours && workHours.length !== 0) {
+                var wh = workHours.find(wh => wh.dayOfWeek === now.getDay())
+                if(!wh || (wh && now.getHours() >= wh.hourFrom)) {
+                    activity.inTime = false;
+                    activity.save();
+                }
             }
-            activity.save();
         }
 
         return activity;
@@ -24,18 +26,21 @@ module.exports = {
 
     update: async function(userId) {
         const now = new Date(Date.now());
-        const workHour = await workHours.findByUserIdAndDay(userId, now.getDay())
         const activity = await activityModel.findOne({agent: userId, to: null})
 
-        if(activity)
-        {
-            if(workHour && now.getHours() < workHour.hourTo) {
-                activity.inTime = false;
+        const workHours = await workHoursService.findByUserId(userId)
+        if(activity) {
+            if(workHours && workHours.length !== 0) {
+                var wh = workHours.find(wh => wh.dayOfWeek === now.getDay())
+                if(!wh || (wh && now.getHours() < wh.hourTo)) {
+                    activity.inTime = false;
+                    activity.save();
+                }
             }
             activity.to = now;
             activity.save();
         }
-
+        
         return activity;
     },
 

@@ -64,8 +64,7 @@ module.exports = {
             });
         } 
         
-        const token = await authenticate.generateToken(
-            user._id, user.representative, process.env.SECRET_KEY);
+        const token = await authenticate.generateToken(user._id, user.representative);
 
         if(!token){
             return res.status(400).json({

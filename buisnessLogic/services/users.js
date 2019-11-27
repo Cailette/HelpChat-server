@@ -1,5 +1,6 @@
 const userModel = require('../../database/models/users');
 const workHoursModel = require('../../database/models/workHours');
+const workHoursService = require('./workHours');
 var Joi = require('joi');
 
 module.exports = {
@@ -101,15 +102,15 @@ module.exports = {
         const workingUsers = [];
 
         for(var user of users){
-            const workHours = await workHoursModel.findOne({ 
-                agent: user._id, 
-                dayOfWeek: now.getDay(), 
-                dayTo: null 
-            });
-            
-            if((workHours && now.getHours() >= workHours.hourFrom 
-                && now.getHours() < workHours.hourTo) || !workHours) {
-                workingUsers.push(user);
+            const workHours = await workHoursService.findByUserId(user._id)
+
+            if(!workHours || workHours.length === 0) {
+                workingUsers.push(user)
+            } else {
+                var wh = workHours.find(wh => wh.dayOfWeek === now.getDay())
+                if(wh && now.getHours() >= wh.hourFrom && now.getHours() < wh.hourTo) {
+                    workingUsers.push(user)
+                }
             }
         }
 

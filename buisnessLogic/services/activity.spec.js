@@ -18,28 +18,24 @@ describe('activityService', function() {
     it('should create activity with same data by user id', sinonTest(async function() {
         let createSpy = sinon.spy(activityService, 'create');
         sinon
-            .mock(workHours)
-            .expects('findByUserIdAndDay')
-            .resolves(null)
-        sinon
             .mock(activitiesModel)
             .expects('create')
             .resolves(m)
+        sinon
+            .mock(workHours)
+            .expects('findByUserId')
+            .resolves(null)
             
         const activity = await activityService.create(m.agent);
         sinon.assert.calledOnce(createSpy);
 
         createSpy.restore();
-        workHours.findByUserIdAndDay.restore();
+        workHours.findByUserId.restore();
         activitiesModel.create.restore();
     }));
 
     it('should update activity with same data by user id', sinonTest(async function() {
         let updateSpy = sinon.spy(activityService, 'update');
-        sinon
-            .mock(workHours)
-            .expects('findByUserIdAndDay')
-            .resolves(null)
         sinon
             .mock(activitiesModel)
             .expects('findOne')
@@ -48,12 +44,16 @@ describe('activityService', function() {
                 to: null
             })
             .resolves(m)
+        sinon
+            .mock(workHours)
+            .expects('findByUserId')
+            .resolves(null)
 
         const activity = await activityService.update(m.agent);
         sinon.assert.calledOnce(updateSpy);
 
         updateSpy.restore();
-        workHours.findByUserIdAndDay.restore();
+        workHours.findByUserId.restore();
         activitiesModel.findOne.restore();
     }));
 
