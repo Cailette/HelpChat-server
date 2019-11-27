@@ -8,7 +8,7 @@ const authenticate = require('../../BuisnessLogic/auth/authenticate');
 const faker = require("faker");
 var mongoose = require('mongoose');
 
-describe("VisitorController", function() {
+describe("WorkHoursController", function() {
     var work = new workHoursModel({ 
         agent: mongoose.Types.ObjectId(),
         hourFrom: Math.floor(Math.random() * 10),

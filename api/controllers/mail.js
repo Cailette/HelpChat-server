@@ -9,7 +9,7 @@ module.exports = {
 
         if(validation.error !== null){
             return res.status(400).json({
-                message: "Wrong data!"
+                message: "Invalid data!"
             });
         }
 

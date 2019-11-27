@@ -129,7 +129,6 @@ module.exports = {
 
     findRandomUserByRepresentative: async function(representative) {
         const users = await this.findAllByRepresentative(representative)
-        console.log(users)
         if(!users){
             return;
         }

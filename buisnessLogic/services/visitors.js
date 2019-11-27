@@ -53,7 +53,6 @@ module.exports = {
             browserSoftware: Joi.string(),
             operatingSoftware: Joi.string(),
         }
-        console.log(Joi.validate(visitor, schema))
         return Joi.validate(visitor, schema);
     }
 }
