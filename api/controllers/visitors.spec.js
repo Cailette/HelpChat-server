@@ -4,7 +4,7 @@ const sinonTest = require('sinon-test')(sinon);
 var visitorController = require('./visitors');
 var visitorsService = require('../../buisnessLogic/services/visitors');
 const visitorModel = require('../../database/models/visitors');
-const authenticate = require('../../BuisnessLogic/auth/authenticate');
+const authenticate = require('../../buisnessLogic/auth/authenticate');
 const faker = require("faker");
 var mongoose = require('mongoose');
 

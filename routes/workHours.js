@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const workHoursController = require('../api/controllers/workHours');
-const authorizate = require('../BuisnessLogic/auth/authorizate');
+const authorizate = require('../buisnessLogic/auth/authorizate');
 
 router.post('/:AgentId', authorizate.authorizate, workHoursController.create);
 

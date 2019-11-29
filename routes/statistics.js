@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const statisticsController = require('../api/controllers/statistics');
-const authorizate = require('../BuisnessLogic/auth/authorizate');
+const authorizate = require('../buisnessLogic/auth/authorizate');
 
 router.get('/chats/:selected/:filterChatAgent/:filterChatDate', 
     authorizate.authorizate, statisticsController.getChatsStatistics);

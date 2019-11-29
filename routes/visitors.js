@@ -3,7 +3,7 @@ const router = express.Router();
 
 const visitorsController = require('../api/controllers/visitors');
 const userController = require('../api/controllers/users');
-const authorizate = require('../BuisnessLogic/auth/authorizate');
+const authorizate = require('../buisnessLogic/auth/authorizate');
 
 router.post('/', visitorsController.create);
 

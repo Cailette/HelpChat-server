@@ -1,5 +1,5 @@
 const visitorService = require('../../buisnessLogic/services/visitors');
-const authenticate = require('../../BuisnessLogic/auth/authenticate');
+const authenticate = require('../../buisnessLogic/auth/authenticate');
 var mongoose = require('mongoose');
 
 module.exports = {

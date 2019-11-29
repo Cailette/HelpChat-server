@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const userController = require('../api/controllers/users');
-const authorizate = require('../BuisnessLogic/auth/authorizate');
+const authorizate = require('../buisnessLogic/auth/authorizate');
 
 router.get('/working-now', authorizate.authorizate, userController.getWorkingUsers);
 router.get('/working-random', authorizate.authorizate, userController.getRandomWorkingUser);
