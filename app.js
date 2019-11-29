@@ -20,7 +20,6 @@ var chatsRouter = require('./routes/chats');
 var mailRouter = require('./routes/mail');
 
 require('dotenv').config();
-// app.set('secretKey', 'HelpChatRestApi'); 
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

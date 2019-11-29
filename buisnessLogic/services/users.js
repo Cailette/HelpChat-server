@@ -1,6 +1,6 @@
 const userModel = require('../../database/models/users');
-const workHoursModel = require('../../database/models/workHours');
 const workHoursService = require('./workHours');
+const activityService = require('./activity');
 var Joi = require('joi');
 
 module.exports = {
@@ -69,6 +69,22 @@ module.exports = {
             return;
         }
         user.isActive = !user.isActive; 
+        return await user.save();
+    },
+
+    checkActivity: async function(user, now) {
+        if(user.constructor.modelName !== 'User') {
+            return;
+        }
+
+        var activity = await activityService.findLastByUserId(user._id)
+        if(activity && activity.to !== null && !user.isActive){
+            const reverted = await activityService.revertActivity(activity, now)
+            if(reverted.to === null){
+                user.isActive = true;
+            }
+        }
+        
         return await user.save();
     },
 

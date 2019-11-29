@@ -4,8 +4,6 @@ const sinonTest = require('sinon-test')(sinon);
 var workHoursController = require('./workHours');
 var workHoursService = require('../../buisnessLogic/services/workHours');
 const workHoursModel = require('../../database/models/workHours');
-const authenticate = require('../../BuisnessLogic/auth/authenticate');
-const faker = require("faker");
 var mongoose = require('mongoose');
 
 describe("WorkHoursController", function() {

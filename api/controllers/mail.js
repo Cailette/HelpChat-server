@@ -1,6 +1,5 @@
 const mailService = require('../../buisnessLogic/services/mail');
 const userService = require('../../buisnessLogic/services/users');
-var Joi = require('joi');
 
 module.exports = {
     sendMail: async function(req, res) {

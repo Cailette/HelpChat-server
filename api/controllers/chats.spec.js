@@ -4,7 +4,6 @@ const sinonTest = require('sinon-test')(sinon);
 var chatController = require('./chats');
 var chatsService = require('../../buisnessLogic/services/chats');
 const chatModel = require('../../database/models/chats');
-const faker = require("faker");
 var mongoose = require('mongoose');
 
 describe("ChatController", function() {

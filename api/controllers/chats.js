@@ -58,6 +58,21 @@ module.exports = {
         });
     },
 
+    disactiveChat: async function(req, res){
+        let chat = await chatService.disactiveChat(req.body.id);
+
+        if(!chat){
+            return res.status(400).json({
+                message: "Can not disactive!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Chat disactive successfully!", 
+            chats: chat
+        });
+    },
+
     delete: async function(req, res){
         const chatDeleted = await chatService.delete(req.params.ChatId)
 

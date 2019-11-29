@@ -1,10 +1,7 @@
 var expect = require('chai').expect;
 const sinon = require('sinon');
 const sinonTest = require('sinon-test')(sinon);
-const sinonMongoose = require('sinon-mongoose')
 var mailService = require('./mail');
-const sendmail = require('sendmail')();
-var mongoose = require('mongoose');
 const faker = require("faker");
  
 describe('mailService', function() {

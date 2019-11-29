@@ -11,7 +11,7 @@ router.post('/register', userController.create);
 router.post('/authenticate', userController.login);
 router.post('/registerAgent', authorizate.authorizate, userController.create);
 
-router.get('/user', authorizate.authorizate, userController.getById);
+router.get('/user', authorizate.authorizate, userController.getAccountInformation);
 router.get('/:AgentId', authorizate.authorizate, userController.getById);
 router.get('/', authorizate.authorizate, userController.getAll);
 

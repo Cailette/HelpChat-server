@@ -2,7 +2,6 @@ const chatModel = require('../../database/models/chats');
 const userService = require('../services/users');
 var moment = require('moment');
 var mongoose = require('mongoose');
-var Joi = require('joi');
 
 module.exports = {
     getChatsStatistics: async function(selected, filterChatAgent, filterChatDate) {

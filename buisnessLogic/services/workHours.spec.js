@@ -5,7 +5,6 @@ const sinonMongoose = require('sinon-mongoose')
 var workHoursService = require('./workHours');
 var workHoursModel = require('../../database/models/workHours');
 var mongoose = require('mongoose');
-const faker = require("faker");
  
 describe('workHoursService', function() {
     sinon.stub(workHoursModel.prototype, 'save')

@@ -1,7 +1,5 @@
 const visitorModel = require('../../database/models/visitors');
 const chatModel = require('../../database/models/chats');
-var moment = require('moment');
-const jwt = require('jsonwebtoken');
 var Joi = require('joi');
 
 module.exports = {

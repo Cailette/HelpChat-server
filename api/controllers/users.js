@@ -94,6 +94,32 @@ module.exports = {
         });
     },
 
+    getAccountInformation: async function(req, res) {
+        const now = new Date(Date.now());
+
+        const user = await userService.findById(
+            req.params.AgentId ? req.params.AgentId : req.body.id);
+
+        if(!user) {
+            return res.status(404).json({
+                message: "User can not be found!"
+            });
+        }
+
+        const userInfo = await userService.checkActivity(user, now);
+
+        if(!userInfo) {
+            return res.status(404).json({
+                message: "User can not be found!"
+            });
+        }
+
+        return res.status(200).json({
+            message: "User found successfully!", 
+            user: userInfo
+        });
+    },
+
     updateById: async function(req, res) {
         const {firstname, lastname, email, password} = req.body;
         const validation = userService.updateUserValidate({

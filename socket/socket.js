@@ -1,10 +1,12 @@
-const userService = require('../buisnessLogic/services/users');
 const chatService = require('../buisnessLogic/services/chats');
 const messagesService = require('../buisnessLogic/services/messages');
 const jwt = require('jsonwebtoken');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
+        var pingCount = 0;
+        var refreshIntervalId = null;
+
         socket
             .on('init', init)
             .on('connectWithAgent', connectWithAgent)
@@ -13,6 +15,7 @@ module.exports = (io) => {
             .on('disconnect', disconnect)
             .on('getLocation', getLocation)
             .on('closeChat', agentCloseChat)
+            .on('pingServer', pingServer)
             .on('message', message);
 
         function init(token, user){
@@ -39,10 +42,11 @@ module.exports = (io) => {
         }
 
         async function connectWithAgent(agentId) {
-            if(agentId !== null) {
+            resetCount();
+            let existChat = await chatService.findActiveByVisitorId(socket.userId);
+            if(agentId !== null && !existChat) {
                 firstChat(agentId);
             } else {
-                let existChat = await chatService.findActiveByVisitorId(socket.userId);
                 nextChat(existChat);
             }
         }
@@ -56,7 +60,7 @@ module.exports = (io) => {
                 socket.emit('error', "Can not create chat.");
             }
             socket.room = newChat._id;
-            socket.join(socket.room);
+            socket.join(newChat._id);
 
             let thisChat = await chatService.findActiveByVisitorId(socket.userId);
 
@@ -71,7 +75,7 @@ module.exports = (io) => {
             socket.agent = chat.agent._id;
             socket.room = chat._id;
 
-            socket.join(socket.room);
+            socket.join(chat._id);
             socket.emit('nextChat', chat);
         }
 
@@ -90,7 +94,6 @@ module.exports = (io) => {
         function switchRoom(room) {
             socket.leave(socket.room);
             socket.room = null;
-
             if(room !== socket.userId) {
                 socket.room = room;
                 socket.join(room);
@@ -103,7 +106,17 @@ module.exports = (io) => {
         }
 
         async function disconnectVisitor(){
-            if(!socket.nextChat) {
+            let existChat = await chatService.findActiveByVisitorId(socket.userId);
+            if(!existChat) 
+                socket.to(socket.agent).emit('visitorDisconnect', socket.room);
+            socket.leave(socket.room);
+        }
+
+        async function emitCheckIfChatting(){
+            if(parseInt(socket.pingCount) !== pingCount &&
+                checkRoom()) clearInterval(refreshIntervalId);
+            if(parseInt(socket.pingCount) !== pingCount &&
+                !checkRoom()){
                 let chat = await chatService.findById(socket.room);
                 if(!chat){
                     console.log("DISCONNECT ERROR in: " + socket.room);
@@ -112,16 +125,39 @@ module.exports = (io) => {
                 if(!updatedChat){
                     console.log("DISCONNECT ERROR in: " + socket.room);
                 }
-                socket.to(socket.agent).emit('visitorDisconnect', socket.room);
+                disconnectVisitor()
+            } else {
+                if(socket.room !== null){
+                    pingCount = pingCount + 1;
+                    console.log("pingCount pingVisitor")
+                    console.log(pingCount)
+                    socket.emit('pingVisitor');
+                }
             }
-            socket.leave(socket.room);
-            socket.room = null;
+        }
+
+        function checkRoom(){
+            let room = io.sockets.adapter.rooms[socket.room]
+            return room && (room.length !== 1  || 
+                (room.length === 1 && io.sockets.connected[Object.keys(room.sockets)[0]].user !== 'agent'))
+        }
+
+        function resetCount(){
+            pingCount = 0;
+            socket.pingCount = 0;
+            refreshIntervalId = setInterval(emitCheckIfChatting, 10000);
+            console.log(io.sockets.adapter.rooms)
+        }
+
+        function pingServer(){
+            socket.pingCount = parseInt(socket.pingCount) + 1;
+            console.log("socket.pingCount")
+            console.log(socket.pingCount)
         }
 
         async function disconnectAgent(){
             if(!socket.nextChat) {
                 if(socket.room !== null){
-                    socket.to(socket.room).emit('agentDisconnect');
                     socket.leave(socket.room);
                 }
             }

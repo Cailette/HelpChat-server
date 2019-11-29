@@ -57,6 +57,26 @@ module.exports = {
         }
     },
 
+    disactiveChat: async function(visitorId){
+        let chat = await this.findActiveByVisitorId(visitorId);
+        if(!chat){
+            return;
+        }
+        let updatedChat = await this.updateActivityFalse(chat)
+        if(!updatedChat){
+            return;
+        }
+        return updatedChat;
+    },
+
+    findActive: async function(id) {
+        if(JSON.stringify(await chatModel.find()) === "[]"){
+            return false;
+        } else {
+            return await chatModel.find({ isActive: true })
+        }
+    },
+
     findById: async function(id) {
         return await chatModel.findById(id)
             .populate({
