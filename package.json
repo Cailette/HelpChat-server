@@ -2,6 +2,9 @@
   "name": "helpchatserver",
   "main": "app.js",
   "version": "1.0.0",
+  "engines": {
+    "node": "12.8.0"
+  },
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
