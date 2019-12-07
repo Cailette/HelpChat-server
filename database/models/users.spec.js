@@ -42,18 +42,23 @@ describe('usersModel', function() {
         done();
     });
 
-    it('should be empty array od chats', function(done) {
+    it('should be empty array of chats', function(done) {
         expect(m.chats).to.be.an('array').that.is.empty;
         done();
     });
 
-    it('should be empty array od activities', function(done) {
+    it('should be empty array of activities', function(done) {
         expect(m.activities).to.be.an('array').that.is.empty;
         done();
     });
 
-    it('should be empty array od workHours', function(done) {
+    it('should be empty array of workHours', function(done) {
         expect(m.workHours).to.be.an('array').that.is.empty;
+        done();
+    });
+
+    it('should be empty array of visitors', function(done) {
+        expect(m.visitors).to.be.an('array').that.is.empty;
         done();
     });
 });

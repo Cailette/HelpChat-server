@@ -33,7 +33,7 @@ describe('chatsModel', function() {
         done();
     });
 
-    it('should be empty array od messanges', function(done) {
+    it('should be empty array of messanges', function(done) {
         expect(m.messages).to.be.an('array').that.is.empty;
         done();
     });

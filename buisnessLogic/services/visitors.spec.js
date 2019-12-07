@@ -21,8 +21,7 @@ describe('visitorService', function() {
         representative: mongoose.Types.ObjectId()
     });
 
-    it('should create visitor with same data', sinonTest(async function() {
-        let createSpy = sinon.spy(visitorService, 'create');
+    it('should create visitor with some data', sinonTest(async function() {
         sinon
             .mock(visitorModel)
             .expects('create')
@@ -37,39 +36,30 @@ describe('visitorService', function() {
             })
             .resolves(m)
         const visitor = await visitorService.create(m.geoLocation, m.browserSoftware, m.operatingSoftware, m.representative);
-        sinon.assert.calledOnce(createSpy);
-        createSpy.restore();
         visitorModel.create.restore();
     }));
 
-    it('should update visitor with same data', sinonTest(async function() {
-        let updateSpy = sinon.spy(visitorService, 'updateVisitor');
+    it('should update visitor with some data', sinonTest(async function() {
         var status = faker.random.boolean();
         sinon
             .mock(visitorModel)
             .expects('update')
             .resolves(m)
         const visitor = await visitorService.updateVisitor(m, status);
-        sinon.assert.calledOnce(updateSpy);
-        updateSpy.restore();
         visitorModel.update.restore();
     }));
 
-    it('should find visitor with same id', sinonTest(async function() {
-        let findByIdSpy = sinon.spy(visitorService, 'findById');
+    it('should find visitor with some id', sinonTest(async function() {
         sinon
             .mock(visitorModel)
             .expects('findById')
             .withArgs(m._id)
             .resolves(m)
         const user = await visitorService.findById(m._id);
-        sinon.assert.calledOnce(findByIdSpy);
-        findByIdSpy.restore();
         visitorModel.findById.restore();
     }));
 
-    it('should find all visitors with same representative id', sinonTest(async function() {
-        let findAllByRepresentativeSpy = sinon.spy(visitorService, 'findAllByRepresentative');
+    it('should find all visitors with some representative id', sinonTest(async function() {
         sinon
             .mock(visitorModel)
             .expects('find')
@@ -79,13 +69,10 @@ describe('visitorService', function() {
             })
             .resolves(m)
         const user = await visitorService.findAllByRepresentative(m.representative);
-        sinon.assert.calledOnce(findAllByRepresentativeSpy);
-        findAllByRepresentativeSpy.restore();
         visitorModel.find.restore();
     }));
 
     it('should count visitor\'s chats by some visitor id', sinonTest(async function() {
-        let countChatsSpy = sinon.spy(visitorService, 'countChats');
         sinon
             .mock(chatModel)
             .expects('count')
@@ -95,8 +82,6 @@ describe('visitorService', function() {
             })
             .resolves(faker.random.number())
         const user = await visitorService.countChats(m._id);
-        sinon.assert.calledOnce(countChatsSpy);
-        countChatsSpy.restore();
         chatModel.count.restore();
     }));
 

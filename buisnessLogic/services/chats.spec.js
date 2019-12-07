@@ -14,8 +14,7 @@ describe('chatsService', function() {
         agent: mongoose.Types.ObjectId()
     });
 
-    it('should create chat with same data', sinonTest(async function() {
-        let createSpy = sinon.spy(chatsService, 'create');
+    it('should create chat with some data', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('create')
@@ -25,13 +24,10 @@ describe('chatsService', function() {
             })
             .resolves(m)
         const chat = await chatsService.create(m.visitor, m.agent);
-        sinon.assert.calledOnce(createSpy);
-        createSpy.restore();
         chatsModel.create.restore();
     }));
 
-    it('should check for active chat with same user id', sinonTest(async function() {
-        let findActiveByUserIdSpy = sinon.spy(chatsService, 'findActiveByUserId');
+    it('should check for active chat with some user id', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('find')
@@ -49,13 +45,10 @@ describe('chatsService', function() {
             })
             .resolves(m)
         const chat = await chatsService.findActiveByUserId(m.agent);
-        sinon.assert.calledOnce(findActiveByUserIdSpy);
-        findActiveByUserIdSpy.restore();
         chatsModel.find.restore();
     }));
 
-    it('should check for inactive chat with same representative id', sinonTest(async function() {
-        let findInactiveByRepresentativeSpy = sinon.spy(chatsService, 'findInactiveByRepresentative');
+    it('should check for inactive chat with some representative id', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('find')
@@ -74,13 +67,10 @@ describe('chatsService', function() {
             .withArgs({date: 1})
             .resolves(m)
         const chat = await chatsService.findInactiveByRepresentative(m.agent);
-        sinon.assert.calledOnce(findInactiveByRepresentativeSpy);
-        findInactiveByRepresentativeSpy.restore();
         chatsModel.find.restore();
     }));
 
-    it('should check for active chat with same visitor id', sinonTest(async function() {
-        let findActiveByVisitorIdSpy = sinon.spy(chatsService, 'findActiveByVisitorId');
+    it('should check for active chat with some visitor id', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('find')
@@ -105,13 +95,10 @@ describe('chatsService', function() {
             })
             .resolves(m)
         const chat = await chatsService.findActiveByVisitorId(m.visitor);
-        sinon.assert.calledOnce(findActiveByVisitorIdSpy);
-        findActiveByVisitorIdSpy.restore();
         chatsModel.findOne.restore();
     }));
 
-    it('should check for chat with same id', sinonTest(async function() {
-        let findByIdSpy = sinon.spy(chatsService, 'findById');
+    it('should check for chat with some id', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('findById')
@@ -121,8 +108,6 @@ describe('chatsService', function() {
             .chain('populate')
             .resolves(m)
         const chat = await chatsService.findById(m._id);
-        sinon.assert.calledOnce(findByIdSpy);
-        findByIdSpy.restore();
         chatsModel.findById.restore();
     }));
 
@@ -133,15 +118,12 @@ describe('chatsService', function() {
         updateRatingSpy.restore();
     }));
 
-    it('should delete chat with same id', sinonTest(async function() {
-        let deleteSpy = sinon.spy(chatsService, 'delete');
+    it('should delete chat with some id', sinonTest(async function() {
         sinon
             .mock(chatsModel)
             .expects('deleteOne')
             .resolves(m)
         const user = await chatsService.delete(m._id);
-        sinon.assert.calledOnce(deleteSpy);
-        deleteSpy.restore();
         chatsModel.deleteOne.restore();
     }));
 

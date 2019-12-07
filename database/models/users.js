@@ -27,12 +27,10 @@ const UserSchema = new Schema({
     },
     isActive: {
         type: Boolean,
-        trim: true,
         default: false
     },
     representative: {
         type: mongoose.Schema.Types.ObjectId, 
-        trim: true,
         default: null,
         ref: 'User'
     },
@@ -47,8 +45,13 @@ const UserSchema = new Schema({
     workHours: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'WorkHours'
-    }]
+    }],
+    visitors: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Visitor'
+    }],
 });
+module.exports = mongoose.model('User', UserSchema);
 
 UserSchema.pre('save', async function(next){
     if(!this.isModified("password")) {
@@ -82,5 +85,3 @@ UserSchema.pre('remove', function() {
         })
     }
 });
-
-module.exports = mongoose.model('User', UserSchema);

@@ -17,8 +17,7 @@ describe('usersService', function() {
         representative: mongoose.Types.ObjectId()
     });
 
-    it('should create user with same data', sinonTest(async function() {
-        let createSpy = sinon.spy(usersService, 'create');
+    it('should create user with some data', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('create')
@@ -31,26 +30,20 @@ describe('usersService', function() {
             })
             .resolves(m)
         const user = await usersService.create(m.firstname, m.lastname, m.email, m.password, m.representative );
-        sinon.assert.calledOnce(createSpy);
-        createSpy.restore();
         usersModel.create.restore();
     }));
 
-    it('should check for user with same email', sinonTest(async function() {
-        let findByEmailSpy = sinon.spy(usersService, 'findByEmail');
+    it('should check for user with some email', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('findOne')
             .withArgs({ email: m.email })
             .resolves(m)
         const user = await usersService.findByEmail(m.email);
-        sinon.assert.calledOnce(findByEmailSpy);
-        findByEmailSpy.restore();
         usersModel.findOne.restore();
     }));
 
-    it('should check for user with same id', sinonTest(async function() {
-        let findByIdSpy = sinon.spy(usersService, 'findById');
+    it('should check for user with some id', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('findById')
@@ -59,13 +52,10 @@ describe('usersService', function() {
             .withArgs('-password')
             .resolves(m)
         const user = await usersService.findById(m._id);
-        sinon.assert.calledOnce(findByIdSpy);
-        findByIdSpy.restore();
         usersModel.findById.restore();
     }));
 
-    it('should check for user activity with same user id', sinonTest(async function() {
-        let findActivityByIdSpy = sinon.spy(usersService, 'findActivityById');
+    it('should check for user activity with some user id', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('findById')
@@ -73,13 +63,10 @@ describe('usersService', function() {
             .withArgs('_id firstname lastname email')
             .resolves(m)
         const user = await usersService.findActivityById(m._id);
-        sinon.assert.calledOnce(findActivityByIdSpy);
-        findActivityByIdSpy.restore();
         usersModel.findById.restore();
     }));
 
-    it('should check for user work hours with same user id', sinonTest(async function() {
-        let findWorkHoursByIdSpy = sinon.spy(usersService, 'findWorkHoursById');
+    it('should check for user work hours with some user id', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('findById')
@@ -87,52 +74,43 @@ describe('usersService', function() {
             .withArgs('_id firstname lastname email')
             .resolves(m)
         const user = await usersService.findWorkHoursById(m._id);
-        sinon.assert.calledOnce(findWorkHoursByIdSpy);
-        findWorkHoursByIdSpy.restore();
         usersModel.findById.restore();
     }));
 
-    it('should find user with same id', sinonTest(async function() {
-        let findUserSpy = sinon.spy(usersService, 'findUser');
+    it('should find user with some id', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('findById')
             .withArgs(m._id)
             .resolves(m)
         const user = await usersService.findUser(m._id);
-        sinon.assert.calledOnce(findUserSpy);
-        findUserSpy.restore();
         usersModel.findById.restore();
     }));
 
-    it('should update user with same data', sinonTest(async function() {
+    it('should update user with some data', sinonTest(async function() {
         let updateUserSpy = sinon.spy(usersService, 'updateUser');
         const user = await usersService.updateUser(m, m.firstname, m.lastname, m.email, m.password);
         sinon.assert.calledOnce(updateUserSpy);
         updateUserSpy.restore();
     }));
 
-    it('should update user activity with same data', sinonTest(async function() {
+    it('should update user activity with some data', sinonTest(async function() {
         let updateActivitySpy = sinon.spy(usersService, 'updateActivity');
         const user = await usersService.updateActivity(m);
         sinon.assert.calledOnce(updateActivitySpy);
         updateActivitySpy.restore();
     }));
 
-    it('should delete user with same id', sinonTest(async function() {
-        let deleteSpy = sinon.spy(usersService, 'delete');
+    it('should delete user with some id', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('deleteOne')
             .resolves(m)
         const user = await usersService.delete(m._id);
-        sinon.assert.calledOnce(deleteSpy);
-        deleteSpy.restore();
         usersModel.deleteOne.restore();
     }));
 
-    it('should check for all users with same id or representative', sinonTest(async function() {
-        let findAllByRepresentativeSpy = sinon.spy(usersService, 'findAllByRepresentative');
+    it('should check for all users with some id or representative', sinonTest(async function() {
         sinon
             .mock(usersModel)
             .expects('find')
@@ -140,8 +118,6 @@ describe('usersService', function() {
             .withArgs('-password')
             .resolves([m])
         const user = await usersService.findAllByRepresentative(m._id);
-        sinon.assert.calledOnce(findAllByRepresentativeSpy);
-        findAllByRepresentativeSpy.restore();
         usersModel.find.restore();
     }));
 

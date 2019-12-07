@@ -17,8 +17,7 @@ describe('messagesService', function() {
         sender: sender[Math.floor(Math.random() * sender.length)],
     });
 
-    it('should create message with same data', sinonTest(async function() {
-        let createSpy = sinon.spy(messagesService, 'create');
+    it('should create message with some data', sinonTest(async function() {
         sinon
             .mock(messagesModel)
             .expects('create')
@@ -30,9 +29,6 @@ describe('messagesService', function() {
             .resolves(m)
             
         const message = await messagesService.create(m.chat, m.content, m.sender);
-        sinon.assert.calledOnce(createSpy);
-
-        createSpy.restore();
         messagesModel.create.restore();
     }));
 

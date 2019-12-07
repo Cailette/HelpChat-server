@@ -15,8 +15,7 @@ describe('activityService', function() {
         from: new Date()
     });
 
-    it('should create activity with same data by user id', sinonTest(async function() {
-        let createSpy = sinon.spy(activityService, 'create');
+    it('should create activity with some data by user id', sinonTest(async function() {
         sinon
             .mock(activitiesModel)
             .expects('create')
@@ -27,15 +26,11 @@ describe('activityService', function() {
             .resolves(null)
             
         const activity = await activityService.create(m.agent);
-        sinon.assert.calledOnce(createSpy);
-
-        createSpy.restore();
         workHours.findByUserId.restore();
         activitiesModel.create.restore();
     }));
 
-    it('should update activity with same data by user id', sinonTest(async function() {
-        let updateSpy = sinon.spy(activityService, 'update');
+    it('should update activity with some data by user id', sinonTest(async function() {
         sinon
             .mock(activitiesModel)
             .expects('findOne')
@@ -50,15 +45,11 @@ describe('activityService', function() {
             .resolves(null)
 
         const activity = await activityService.update(m.agent);
-        sinon.assert.calledOnce(updateSpy);
-
-        updateSpy.restore();
         workHours.findByUserId.restore();
         activitiesModel.findOne.restore();
     }));
 
     it('should chcek for activity with some user id', sinonTest(async function() {
-        let findByUserIdSpy = sinon.spy(activityService, 'findByUserId');
         sinon
             .mock(activitiesModel)
             .expects('find')
@@ -72,9 +63,6 @@ describe('activityService', function() {
             .resolves(m)
 
         const activity = await activityService.findByUserId(m.agent);
-        sinon.assert.calledOnce(findByUserIdSpy);
-
-        findByUserIdSpy.restore();
         activitiesModel.find.restore();
     }));
 });

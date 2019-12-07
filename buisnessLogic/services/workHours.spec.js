@@ -16,8 +16,7 @@ describe('workHoursService', function() {
         dayOfWeek: Math.floor(Math.random() * 7) 
     });
 
-    it('should create work hours with same data for some user', sinonTest(async function() {
-        let createSpy = sinon.spy(workHoursService, 'create');
+    it('should create work hours with some data for some user', sinonTest(async function() {
         sinon
             .mock(workHoursModel)
             .expects('findOne')
@@ -34,9 +33,6 @@ describe('workHoursService', function() {
             .resolves(m)
             
         const workHours = await workHoursService.create(m.agent, m.hourFrom, m.hourTo, m.dayOfWeek);
-        sinon.assert.calledOnce(createSpy);
-
-        createSpy.restore();
         workHoursModel.findOne.restore();
         workHoursModel.create.restore();
     }));
@@ -48,21 +44,16 @@ describe('workHoursService', function() {
         updateDayToSpy.restore();
     }));
 
-    it('should check for work hours with same id', sinonTest(async function() {
-        let findByIdSpy = sinon.spy(workHoursService, 'findById');
+    it('should check for work hours with some id', sinonTest(async function() {
         sinon
             .mock(workHoursModel)
             .expects('findById')
             .resolves(m)
         const workHours = await workHoursService.findById(m._id);
-        sinon.assert.calledOnce(findByIdSpy);
-
-        findByIdSpy.restore();
         workHoursModel.findById.restore();
     }));
 
-    it('should check for work hours with same user id', sinonTest(async function() {
-        let findByUserIdSpy = sinon.spy(workHoursService, 'findByUserId');
+    it('should check for work hours with some user id', sinonTest(async function() {
         sinon
             .mock(workHoursModel)
             .expects('find')
@@ -76,14 +67,10 @@ describe('workHoursService', function() {
             .withArgs('dayOfWeek')
             .resolves(m)
         const workHours = await workHoursService.findByUserId(m.agent);
-        sinon.assert.calledOnce(findByUserIdSpy);
-        
-        findByUserIdSpy.restore();
         workHoursModel.find.restore();
     }));
 
-    it('should check for work hours with same user id and day', sinonTest(async function() {
-        let findByUserIdAndDaySpy = sinon.spy(workHoursService, 'findByUserIdAndDay');
+    it('should check for work hours with some user id and day', sinonTest(async function() {
         sinon
             .mock(workHoursModel)
             .expects('findOne')
@@ -96,9 +83,6 @@ describe('workHoursService', function() {
             .withArgs('-dayTo -agent -dayFrom')
             .resolves(m)
         const workHours = await workHoursService.findByUserIdAndDay(m.agent,m.dayOfWeek);
-        sinon.assert.calledOnce(findByUserIdAndDaySpy);
-        
-        findByUserIdAndDaySpy.restore();
         workHoursModel.findOne.restore();
     }));
 

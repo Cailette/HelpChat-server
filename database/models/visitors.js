@@ -46,4 +46,15 @@ const VisitorSchema = new Schema({
     }]
 });
 
+VisitorSchema.post('save', async function(){
+    const User = require('./users');
+    const user = await User.findById(this.representative);
+    if(user.visitors.indexOf(this._id) === -1){
+        user.visitors.push(this._id);
+        user.save((err) => {
+            console.log(err)
+        });
+    }
+});
+
 module.exports = mongoose.model('Visitor', VisitorSchema);

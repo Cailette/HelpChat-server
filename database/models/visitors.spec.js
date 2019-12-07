@@ -26,7 +26,7 @@ describe('visitorsModel', function() {
         done();
     });
 
-    it('should be empty array od chats', function(done) {
+    it('should be empty array of chats', function(done) {
         expect(m.chats).to.be.an('array').that.is.empty;
         done();
     });
