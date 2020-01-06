@@ -1,5 +1,5 @@
 # HelpChat Server
-HelpChat-server is the server engine of HelpChat. Written in <b>Node.js</b> and <b>Express.js</b>. <b>Socket.io</b> and <b>MongoDB</b> database was used in the project. 
+HelpChat-server is the server engine of HelpChat. Written in <b>Node.js</b> and <b>Express.js</b>. <b>Socket.io</b> and <b>MongoDB</b> database were used in the project. 
 
 - <a href="https://github.com/nodejs">Node.js</a>
 - <a href="https://github.com/expressjs/express">Express.js</a>
