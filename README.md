@@ -5,9 +5,7 @@ HelpChat-server is the server engine of HelpChat. Written in <b>Node.js</b> and 
 - <a href="https://github.com/expressjs/express">Express.js</a>
 - <a href="https://github.com/socketio/socket.io">Socket.io</a>
 - <a href="https://github.com/mongodb/mongo">MongoDB</a>
-
-<hr>
-
+###### Other
 - <a href="https://github.com/dcodeIO/bcrypt.js">Bcryptjs</a>
 - <a href="https://github.com/hapijs/joi">Joi</a>
 - <a href="https://github.com/auth0/node-jsonwebtoken">Jsonwebtoken</a>
