@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "nodemon": "nodemon ./bin/www",
-    "test": "mocha './buisnessLogic/services/*.spec.js'"
+    "test": "mocha './*/*/*.spec.js'"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
