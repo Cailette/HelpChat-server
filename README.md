@@ -17,7 +17,7 @@ Local install
 -- 
 1. `mkdir <folder_name>`
 2. `cd <folder_name>`
-3. `git clone https://github.com/Cailette/react-weather-app.git` .
+3. `git clone https://github.com/Cailette/HelpChat-server.git` .
 4. `npm install`
 5. `npm start` OR `npm run nodemon`
 6. then load http://localhost:3000/ in your browser to access the app
