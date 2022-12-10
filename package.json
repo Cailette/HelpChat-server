@@ -21,7 +21,7 @@
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "ejs": "~2.6.1",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "express-validator": "^6.1.1",
     "faker": "^4.1.0",
     "http-errors": "~1.6.3",
